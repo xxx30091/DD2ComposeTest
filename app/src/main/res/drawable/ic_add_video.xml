@@ -1,0 +1,36 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="90dp"
+    android:height="90dp"
+    android:viewportWidth="90"
+    android:viewportHeight="90">
+    <path
+        android:pathData="M-330,-267h750v1624L-330,1357z"
+        android:fillColor="#FFF"
+        android:fillType="evenOdd"/>
+    <path
+        android:pathData="M-298,-119L388,-119A2,2 0,0 1,390 -117L390,267A2,2 0,0 1,388 269L-298,269A2,2 0,0 1,-300 267L-300,-117A2,2 0,0 1,-298 -119z"
+        android:strokeWidth="2"
+        android:fillColor="#FBFBFB"
+        android:strokeColor="#C7C7C7"
+        android:fillType="evenOdd"/>
+    <path
+        android:pathData="M45,0c24.85,0 45,20.15 45,45S69.85,90 45,90 0,69.85 0,45 20.15,0 45,0z"
+        android:fillColor="#6DA5FF"
+        android:fillType="evenOdd"/>
+    <path
+        android:pathData="m60,55.313 l2.98,1.303C62.706,60.189 59.713,63 56.067,63L35,62.999L35,60h21.068A3.926,3.926 0,0 0,60 56.082v-0.769zM56.067,27a6.926,6.926 0,0 1,6.876 6.03L60,34.5v-0.582A3.923,3.923 0,0 0,56.067 30L23.933,30A3.926,3.926 0,0 0,20 33.918L20,45h-3L17,33.918C17,30.095 20.107,27 23.933,27h32.134zM73.88,35.003 L62.089,41.48c-0.045,0.021 -0.089,0.087 -0.089,0.174v6.693c0,0.087 0.044,0.153 0.089,0.173L73.88,55c0.054,0.003 0.12,-0.06 0.12,-0.174L74,35.176a0.233,0.233 0,0 0,-0.024 -0.103c-0.035,-0.07 -0.07,-0.082 -0.096,-0.07zM71.132,32.416c2.059,-1.015 4.52,-0.11 5.482,1.98 0.254,0.553 0.386,1.155 0.386,1.765L77,53.84c0,2.282 -1.814,4.16 -4.087,4.16a4.028,4.028 0,0 1,-1.781 -0.416l-9.826,-5.829A4.167,4.167 0,0 1,59 48.011L59,41.99c0,-1.588 0.89,-3.046 2.306,-3.744l9.826,-5.829z"
+        android:fillColor="#FFF"
+        android:fillType="nonZero"/>
+    <path
+        android:pathData="M26,35m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0"
+        android:fillColor="#FFF"
+        android:fillType="evenOdd"/>
+    <path
+        android:pathData="M17,53h17v3H17z"
+        android:fillColor="#FFF"
+        android:fillType="evenOdd"/>
+    <path
+        android:pathData="M27,46v17h-3V46z"
+        android:fillColor="#FFF"
+        android:fillType="evenOdd"/>
+</vector>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/mineFragment">
+
+    <fragment
+        android:id="@+id/fansPromoteFragment"
+        android:name="com.example.dd2composetest.ui.promote.FansPromoteFragment"
+        android:label="FansPromoteFragment"
+        tools:layout="@layout/fragment_fans_promote"
+        />
+<!--        tools:layout="@layout/fragment_fans_promote"-->
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.dd2composetest.ui.main.MainFragment"
+        android:label="MainFragment" />
+    <fragment
+        android:id="@+id/myDataFragment"
+        android:name="com.example.dd2composetest.ui.mydata.MyDataFragment"
+        android:label="MyDataFragment" >
+        <action
+            android:id="@+id/action_myDataFragment_to_recommendationVideoFragment"
+            app:destination="@id/recommendationVideoFragment" />
+        <action
+            android:id="@+id/action_myDataFragment_to_fansPromoteFragment2"
+            app:destination="@id/fansPromoteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/promoteHistoryFragment"
+        android:name="com.example.dd2composetest.ui.promote.PromoteHistoryFragment"
+        android:label="PromoteHistoryFragment" />
+    <fragment
+        android:id="@+id/promoteSettingFragment"
+        android:name="com.example.dd2composetest.ui.promote.PromoteSettingFragment"
+        android:label="PromoteSettingFragment" />
+    <fragment
+        android:id="@+id/recommendationVideoFragment"
+        android:name="com.example.dd2composetest.ui.promote.RecommendationVideoFragment"
+        android:label="RecommendationVideoFragment"
+        tools:layout="@layout/fragment_recommendation_video"/>
+    <fragment
+        android:id="@+id/videoPromoteFragment"
+        android:name="com.example.dd2composetest.ui.promote.VideoPromoteFragment"
+        android:label="VideoPromoteFragment" />
+    <fragment
+        android:id="@+id/mineFragment"
+        android:name="com.example.dd2composetest.ui.mine.MineFragment"
+        android:label="MineFragment" >
+
+    </fragment>
+
+    <action
+        android:id="@+id/action_to_recommendationVideo"
+        app:destination="@id/recommendationVideoFragment" />
+    <action
+        android:id="@+id/action_to_fansPromote"
+        app:destination="@id/fansPromoteFragment" />
+    <action
+        android:id="@+id/action_to_myData"
+        app:destination="@id/myDataFragment" />
+
+</navigation>

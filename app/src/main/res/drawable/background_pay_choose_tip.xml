@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="45dp"
+    android:height="45dp"
+    android:viewportWidth="45"
+    android:viewportHeight="45">
+    <path
+        android:name="triangle"
+        android:fillColor="#619cf8"
+        android:pathData="M6,0H45L0,45V6A6,6,0,0,1,6,0Z" />
+</vector>

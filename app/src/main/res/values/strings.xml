@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">DD2 Compose Test</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="fans_promote_tab">
+        <item>推送设置</item>
+        <item>推送历史</item>
+    </string-array>
+
+    <string name="string_promote_setting">推送设置</string>
+    <string name="string_promote_history">推送历史</string>
+</resources>
