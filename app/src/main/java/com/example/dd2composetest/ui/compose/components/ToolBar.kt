@@ -23,9 +23,14 @@ import androidx.navigation.NavHostController
 import com.example.dd2composetest.ThisApp
 
 
+enum class ToolBarType {
+    NORMAL_TOOLBAR,
+    LOGOUT_TOOLBAR
+}
+
 // rightBtnType: 0 -> not show, 1 -> 登出
 @Composable
-fun Toolbar(navController: NavHostController, title: String, rightBtnType: Int) {
+fun Toolbar(navController: NavHostController, title: String, rightBtnType: ToolBarType, otherAction1: () -> Unit = {}) {
     TopAppBar(
         modifier = Modifier.height(56.dp),
         backgroundColor = Color(0xff24262c),
@@ -35,7 +40,10 @@ fun Toolbar(navController: NavHostController, title: String, rightBtnType: Int) 
             contentAlignment = Alignment.Center
         ) {
             IconButton(
-                onClick = { navController.popBackStack() },
+                onClick = {
+                    navController.popBackStack()
+                    otherAction1.invoke()
+                          },
                 modifier = Modifier.align(Alignment.CenterStart)
             ) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "")
@@ -50,8 +58,8 @@ fun Toolbar(navController: NavHostController, title: String, rightBtnType: Int) 
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
-            if (rightBtnType != 0) Text(
-                text = if (rightBtnType == 1) "登出" else "",
+            if (rightBtnType != ToolBarType.NORMAL_TOOLBAR) Text(
+                text = if (rightBtnType == ToolBarType.LOGOUT_TOOLBAR) "登出" else "",
                 modifier = Modifier
                     .padding(end = 16.dp)
                     .align(Alignment.CenterEnd)
@@ -59,6 +67,7 @@ fun Toolbar(navController: NavHostController, title: String, rightBtnType: Int) 
                         Toast
                             .makeText(ThisApp.instance, "登出", Toast.LENGTH_SHORT)
                             .show()
+                        otherAction1.invoke()
                     },
                 color = Color.White,
                 fontSize = 18.sp
@@ -94,45 +103,7 @@ fun Toolbar(navController: NavHostController, title: String, rightBtnType: Int) 
 @Composable
 fun PreviewToolbar(navController: NavHostController = NavHostController(LocalContext.current),
                    title: String = "頁面名稱", rightBtnType: Int = 1) {
-    TopAppBar(
-        modifier = Modifier.height(56.dp),
-        backgroundColor = Color(0xff24262c),
-        contentColor = Color.White,
-    ) {
-        Box(
-            contentAlignment = Alignment.Center
-        ) {
-            IconButton(
-                onClick = { navController.popBackStack() },
-                modifier = Modifier.align(Alignment.CenterStart)
-            ) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "")
-            }
-            Text(
-                text = title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.Center),
-                color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-            if (rightBtnType != 0) Text(
-                text = if (rightBtnType == 1) "登出" else "",
-                modifier = Modifier
-                    .padding(end = 16.dp)
-                    .align(Alignment.CenterEnd)
-                    .clickable {
-                        Toast
-                            .makeText(ThisApp.instance, "登出", Toast.LENGTH_SHORT)
-                            .show()
-                    },
-                color = Color.White,
-                fontSize = 18.sp
-            )
-        }
-    }
+    Toolbar(navController = navController, title = title, rightBtnType = ToolBarType.LOGOUT_TOOLBAR)
 }
 //
 //@Preview

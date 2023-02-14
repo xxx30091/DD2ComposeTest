@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/fansPromoteFragment"
-        android:name="com.example.dd2composetest.ui.promote.FansPromoteFragment"
+        android:name="com.example.dd2composetest.ui.fagment.promote.FansPromoteFragment"
         android:label="FansPromoteFragment"
         tools:layout="@layout/fragment_fans_promote"
         />
@@ -15,11 +15,11 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.example.dd2composetest.ui.main.MainFragment"
+        android:name="com.example.dd2composetest.ui.fagment.main.MainFragment"
         android:label="MainFragment" />
     <fragment
         android:id="@+id/myDataFragment"
-        android:name="com.example.dd2composetest.ui.mydata.MyDataFragment"
+        android:name="com.example.dd2composetest.ui.fagment.mydata.MyDataFragment"
         android:label="MyDataFragment" >
         <action
             android:id="@+id/action_myDataFragment_to_recommendationVideoFragment"
@@ -30,24 +30,24 @@
     </fragment>
     <fragment
         android:id="@+id/promoteHistoryFragment"
-        android:name="com.example.dd2composetest.ui.promote.PromoteHistoryFragment"
+        android:name="com.example.dd2composetest.ui.fagment.promote.PromoteHistoryFragment"
         android:label="PromoteHistoryFragment" />
     <fragment
         android:id="@+id/promoteSettingFragment"
-        android:name="com.example.dd2composetest.ui.promote.PromoteSettingFragment"
+        android:name="com.example.dd2composetest.ui.fagment.promote.PromoteSettingFragment"
         android:label="PromoteSettingFragment" />
     <fragment
         android:id="@+id/recommendationVideoFragment"
-        android:name="com.example.dd2composetest.ui.promote.RecommendationVideoFragment"
+        android:name="com.example.dd2composetest.ui.fagment.promote.RecommendationVideoFragment"
         android:label="RecommendationVideoFragment"
         tools:layout="@layout/fragment_recommendation_video"/>
     <fragment
         android:id="@+id/videoPromoteFragment"
-        android:name="com.example.dd2composetest.ui.promote.VideoPromoteFragment"
+        android:name="com.example.dd2composetest.ui.fagment.promote.VideoPromoteFragment"
         android:label="VideoPromoteFragment" />
     <fragment
         android:id="@+id/mineFragment"
-        android:name="com.example.dd2composetest.ui.mine.MineFragment"
+        android:name="com.example.dd2composetest.ui.fagment.mine.MineFragment"
         android:label="MineFragment" >
 
     </fragment>

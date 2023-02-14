@@ -1,0 +1,26 @@
+package com.example.dd2composetest.data.bean
+
+data class MyVideoBean(
+    var id: Int = 0,
+    var userAccount: String = "",
+    var authorName: String = "",
+    var authorImgUrl: String = "",
+    var title: String = "",
+    var videoUrl: String = "",
+//    var coverUrl: Int = 0,
+    var coverUrl: String = "",
+    var previewUrl: String = "",
+    var likeCount: Int = 0,
+    var playCount: Int = 0,
+    var favoritesCount: String = "",
+    var isLike: Boolean = false,
+    var isFavorites: Boolean = false,
+    var isView: Boolean = false,
+    var hasTopic: Boolean = false,
+    var topicName: String = "",
+    var creationDateTime: String = "",
+    var webmUrl: String = "",
+    var duration: Long = 0,
+    var isUnlocked: Boolean = false,
+    var creationDate: String = "",
+)

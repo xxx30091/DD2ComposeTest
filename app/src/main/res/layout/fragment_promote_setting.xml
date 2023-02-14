@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="#F5F5F5"
-        tools:context=".ui.promote.PromoteSettingFragment">
+        tools:context=".ui.fagment.promote.PromoteSettingFragment">
 <!--        android:background="#F5F5F5"-->
 
         <androidx.compose.ui.platform.ComposeView

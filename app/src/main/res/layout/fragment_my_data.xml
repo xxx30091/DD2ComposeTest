@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.mydata.MyDataFragment">
+        tools:context=".ui.fagment.mydata.MyDataFragment">
 <!--        android:id="@+id/my_nav_host_fragment"-->
 
         <androidx.compose.ui.platform.ComposeView

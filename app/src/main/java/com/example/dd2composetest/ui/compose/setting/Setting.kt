@@ -18,7 +18,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.example.dd2composetest.ThisApp
 import com.example.dd2composetest.enum.Screen
+import com.example.dd2composetest.preference.Preference
+import com.example.dd2composetest.ui.compose.components.ToolBarType
 import com.example.dd2composetest.ui.compose.components.Toolbar
 
 @Preview
@@ -62,7 +65,14 @@ fun SettingScreen(navController: NavHostController = NavHostController(LocalCont
             .fillMaxSize()
             .background(Color.White)
     ) {
-        Toolbar(navController = navController, title = "設置", rightBtnType = 1)
+        Toolbar(
+            navController = navController,
+            title = "設置",
+            rightBtnType = ToolBarType.LOGOUT_TOOLBAR,
+            otherAction1 = {
+                Preference.getInstance(ThisApp.instance).clear()
+            }
+        )
         SettingItem("修改密碼", "", false)
         SettingItem("註銷帳號", "", false)
         SettingItem("版本號", "2.0.11.0 st", false)

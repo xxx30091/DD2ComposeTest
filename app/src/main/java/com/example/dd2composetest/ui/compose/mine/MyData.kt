@@ -21,6 +21,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.example.dd2composetest.R
 import com.example.dd2composetest.enum.Screen
+import com.example.dd2composetest.ui.compose.mine.navigateToEditUser
+import com.example.dd2composetest.ui.compose.mine.navigateToMyWorks
 import com.google.accompanist.pager.ExperimentalPagerApi
 
 @Composable
@@ -165,8 +167,8 @@ fun MyDataScreen(navController: NavHostController) {
         verticalArrangement = Arrangement.Top
     ) {
         MyDataToolbar(navController, "我的资料")
-        Item(R.drawable.ic_edit_user, "编辑个人资料") { navController.navigateToFansPromote() }
-        Item(R.drawable.ic_my_work, "我的作品") { navController.navigateToRecommendationVideo() }
+        Item(R.drawable.ic_edit_user, "编辑个人资料") { navController.navigateToEditUser() }
+        Item(R.drawable.ic_my_work, "我的作品") { navController.navigateToMyWorks() }
         Item(R.drawable.ic_notification, "消息通知") { navController.navigateToFansPromote() }
         Item(R.drawable.ic_my_favorite, "我的收藏") { navController.navigateToRecommendationVideo() }
     }

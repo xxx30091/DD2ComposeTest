@@ -1,45 +1,76 @@
 package com.example.dd2composetest
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.*
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.dd2composetest.enum.Screen
+import com.example.dd2composetest.preference.Preference
 import com.example.dd2composetest.ui.compose.*
-import com.example.dd2composetest.ui.compose.mine.myCoin
+import com.example.dd2composetest.ui.compose.components.datepicker.datePicker
+import com.example.dd2composetest.ui.compose.engage.myEngage
+import com.example.dd2composetest.ui.compose.login.login
+import com.example.dd2composetest.ui.compose.mine.*
 import com.example.dd2composetest.ui.compose.payment.payChoose
 import com.example.dd2composetest.ui.compose.setting.setting
-import com.example.dd2composetest.ui.mine.MineFragment
-import com.example.dd2composetest.ui.mydata.MyDataFragment
-import com.example.dd2composetest.ui.promote.FansPromoteFragment
-import com.example.dd2composetest.ui.promote.PromoteSettingFragment
-import com.example.dd2composetest.ui.promote.RecommendationVideoFragment
+import com.example.dd2composetest.ui.fagment.mine.MineFragment
+import com.example.dd2composetest.ui.fagment.mydata.MyDataFragment
+import com.example.dd2composetest.ui.fagment.promote.FansPromoteFragment
+import com.example.dd2composetest.ui.fagment.promote.PromoteSettingFragment
+import com.example.dd2composetest.ui.fagment.promote.RecommendationVideoFragment
+import com.google.accompanist.navigation.material.BottomSheetNavigator
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.android.material.datepicker.MaterialDatePicker
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.NonDisposableHandle.parent
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     var lastFragment: Fragment? = null
 
+    @ExperimentalTextApi
+    @ExperimentalMaterialNavigationApi
+    @ExperimentalFoundationApi
+    @RequiresApi(Build.VERSION_CODES.O)
     @ExperimentalMaterialApi
     @ExperimentalComposeUiApi
     @ExperimentalPagerApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        setContentView(R.layout.activity_main)
-
 //        val navController = findNavController(R.id.fragmentContainer)
+//        val myCoinViewModel by viewModels<MyCoinViewModel>()
 
         setContent {
+            val navigator = rememberBottomSheetNavigator(true)
             MaterialTheme {
-                ComposeNavigation()
+                com.google.accompanist.navigation.material.ModalBottomSheetLayout(
+                    bottomSheetNavigator = navigator,
+                    sheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+                    sheetBackgroundColor = Color.White
+                ) {
+                    ComposeNavigation(this)
+                }
             }
         }
 
@@ -73,27 +104,46 @@ class MainActivity : AppCompatActivity() {
 //            Log.d("AppDebug", e.toString())
 //        }
 //    }
+
 }
 
 private val msgs = listOf(0, 1, 2, 3, 1, 2)
 
+@ExperimentalTextApi
+@RequiresApi(Build.VERSION_CODES.O)
+@ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalPagerApi
 @Composable
-fun ComposeNavigation() {
-    val navController = rememberNavController()
-    NavHost(
-        navController = navController,
-        startDestination = Screen.MINE_SCREEN.route
+fun ComposeNavigation(activity: MainActivity) {
+    val navigator = rememberBottomSheetNavigator(skipHalfExpanded = true)
+    val navController = rememberNavController(navigator)
+    val isLogin = Preference.getInstance(ThisApp.instance).getLoginStatus()
+
+    com.google.accompanist.navigation.material.ModalBottomSheetLayout(
+        bottomSheetNavigator = navigator,
+        sheetShape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)
     ) {
-        mine(navController)
-        setting(navController)
-        myCoin(navController)
-        myData(navController)
-        fansPromote(navController)
-        recommendationVideo(navController)
-        payChoose(navController)
+        NavHost(
+            navController = navController,
+            startDestination = if (isLogin) Screen.MINE_SCREEN.route
+            else Screen.LOGIN_SCREEN.route
+//        Screen.LOGIN_SCREEN.route
+        ) {
+            login(navController)
+            mine(navController)
+            editUser(navController)
+            setting(navController)
+            myCoin(navController, activity)
+            myData(navController)
+            myWorks(navController, activity)
+            fansPromote(navController)
+            recommendationVideo(navController)
+            payChoose(navController)
+            myEngage(navController)
+            dateRangePicker(navController)
+            datePicker(navController)
 
 //        composable(Screen.MY_DATA_SCREEN.route) {
 //            MyDataScreen(
@@ -117,7 +167,9 @@ fun ComposeNavigation() {
 //        composable(Screen.FANS_PROMOTE_SCREEN.route) {
 //            FansPromoteScreen(onClickBack = { navController.popBackStack() })
 //        }
+        }
     }
+
 }
 
 fun NavHostController.navigateSingleTopTo(route: String) =
@@ -131,6 +183,20 @@ fun NavHostController.navigateSingleTopTo(route: String) =
         restoreState = true
     }
 
+@ExperimentalMaterialNavigationApi
+@ExperimentalMaterialApi
+@Composable
+public fun rememberBottomSheetNavigator(skipHalfExpanded: Boolean): BottomSheetNavigator {
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        animationSpec = SwipeableDefaults.AnimationSpec,
+        skipHalfExpanded = skipHalfExpanded,
+        confirmStateChange = { true }
+    )
+    return remember(sheetState) {
+        BottomSheetNavigator(sheetState = sheetState)
+    }
+}
 
 //
 //@Composable

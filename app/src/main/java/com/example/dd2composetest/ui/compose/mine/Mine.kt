@@ -35,6 +35,7 @@ import androidx.navigation.compose.composable
 import com.example.dd2composetest.R
 import com.example.dd2composetest.ThisApp
 import com.example.dd2composetest.enum.Screen
+import com.example.dd2composetest.ui.compose.engage.navigateToMyEngage
 import com.example.dd2composetest.ui.compose.mine.navigateToMyGoldCoin
 import com.example.dd2composetest.ui.compose.mine.navigateToMyRedCoin
 import com.example.dd2composetest.ui.compose.payment.navigateToPayChoose
@@ -377,289 +378,29 @@ fun MineHeader(imgId: Int, isPlan: Boolean, navController: NavHostController) {
 
 @Preview
 @Composable
-fun PreviewMineHeader(imgId: Int = R.drawable.a, isPlan: Boolean = true, navController: NavHostController = NavHostController(LocalContext.current)) {
-    var hasUpdate by remember { mutableStateOf(true) }
-    var hasNewMessage by remember { mutableStateOf(true) }
-    var hasNewSystemMessage by remember { mutableStateOf(true) }
-    //  模糊效果僅適用於 Android 12 以上版本。嘗試在較舊的 Android 版本中使用這個修飾符會予以忽略
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-//                .height(202.dp)
-            .padding(bottom = 8.dp)
-            .background(Color.White)
-    ) {
-        // 底層背景
-        Image(
-            painter = painterResource(id = imgId),
-            contentDescription = "",
-            modifier = Modifier
-                .blur(radius = 9.dp, BlurredEdgeTreatment(RectangleShape))
-                .fillMaxWidth()
-                .height(141.dp),
-            contentScale = ContentScale.Crop,
-        )
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .height(141.dp)
-            .background(Color(0x4d000000))) { }
-
-        // 內容
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 8.dp),
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Text(
-                    text = "设置",
-                    fontSize = 16.sp,
-                    color = Color.White,
-                    modifier = Modifier.clickable { },
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .height(64.dp)
-                    .fillMaxWidth()
-                    .padding(bottom = 14.dp),
-//                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = imgId),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape)
-                        .border(
-                            BorderStroke(0.5.dp, Color.White),
-                            CircleShape
-                        )
-                        .clickable(onClick = { navController.navigateToMyData() }),
-                    contentScale = ContentScale.Crop
-                )
-                Column(
-                    modifier = Modifier
-                        .padding(start = 58.dp)
-                        .align(Alignment.CenterStart),
-//                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(text = "我是大哥", fontSize = 20.sp, color = Color.White, maxLines = 1)
-                    Text(
-                        text = if (isPlan) "包時段將於2023-09-30 00:00到期" else "目前无包时段优惠",
-                        color = if (isPlan) Color(0xffce9f09) else Color(0xffb3ffffff),
-                        fontSize = 12.sp,
-                        maxLines = 1
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .align(Alignment.BottomEnd),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.Bottom
-                ) {
-                    IconButton(
-                        onClick = {},
-                        modifier = Modifier.size(24.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_mine_history), contentDescription = "",
-                            modifier = Modifier.size(24.dp), tint = Color.White,
-                        )
-                    }
-                    IconButton(
-                        onClick = { hasUpdate = !hasUpdate },
-                        modifier = Modifier.size(24.dp)
-                    ) {
-                        BadgedBox(
-                            badge = {
-                                if (hasUpdate) Divider(modifier = Modifier
-                                    .size(6.dp)
-                                    .clip(CircleShape), color = Color.Red)
-                            }
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_download), contentDescription = "",
-                                modifier = Modifier.size(24.dp), tint = Color.White,
-                            )
-                        }
-                    }
-                    IconButton(
-                        onClick = { hasNewMessage = !hasNewMessage },
-                        modifier = Modifier.size(24.dp)
-                    ) {
-                        BadgedBox(
-                            badge = {
-                                if (hasNewMessage) Divider(modifier = Modifier
-                                    .size(6.dp)
-                                    .clip(CircleShape), color = Color.Red)
-                            }
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_customer_service), contentDescription = "",
-                                modifier = Modifier.size(24.dp), tint = Color.White,
-                            )
-                        }
-                    }
-                    IconButton(
-                        onClick = { hasNewSystemMessage = !hasNewSystemMessage },
-                        modifier = Modifier.size(24.dp)
-                    ) {
-                        BadgedBox(
-                            badge = {
-                                if (hasNewSystemMessage) Divider(modifier = Modifier
-                                    .size(6.dp)
-                                    .clip(CircleShape), color = Color.Red)
-                            }
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_notification), contentDescription = "",
-                                modifier = Modifier.size(24.dp), tint = Color.White,
-                            )
-                        }
-                    }
-                }
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(
-                        if (hasUpdate) 78.dp else 50.dp
-                    )
-                    .shadow(1.dp, shape = RoundedCornerShape(13.dp))
-                    .background(
-                        brush = Brush.horizontalGradient(colorStops = colorGoldList),
-                        shape = RoundedCornerShape(13.dp)
-                    )
-            ) {
-                Row( // 白色底
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .background(
-                            color = Color.White,
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                        .padding(start = 14.dp, end = 7.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "金币", fontSize = 12.sp, color = Color(0xff777c81),
-                        textAlign = TextAlign.Start
-                    )
-                    Text(
-                        text = "6543. 万",
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable {
-                                Toast
-                                    .makeText(ThisApp.instance, "進入金幣頁面", Toast.LENGTH_SHORT)
-                                    .show()
-                            },
-                        fontSize = 18.sp,
-                        color = Color(0xffce9f09),
-                        textAlign = TextAlign.Center,
-                        letterSpacing = (-0.48).sp,
-                        maxLines = 1
-                    )
-                    Divider(
-                        modifier = Modifier
-                            .width(1.dp)
-                            .height(17.dp),
-                        color = Color(0xffe8e8e8)
-                    )
-
-                    Text(
-                        text = "红币",
-                        modifier = Modifier.padding(start = 8.dp),
-                        fontSize = 12.sp, color = Color(0xff777c81),
-                        textAlign = TextAlign.Start
-                    )
-
-                    Text(
-                        text = "1234.65 万",
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable {
-                                Toast
-                                    .makeText(ThisApp.instance, "進入紅幣頁面", Toast.LENGTH_SHORT)
-                                    .show()
-                            },
-                        fontSize = 18.sp,
-                        color = Color(0xffcc2014),
-                        textAlign = TextAlign.Center,
-                        letterSpacing = (-0.48).sp,
-                        maxLines = 1
-                    )
-                    TextButton(
-                        onClick = { navController.navigateToPayChoose() },
-                        modifier = Modifier
-                            .height(32.dp)
-                            .width(75.dp),
-                        shape = RoundedCornerShape(9.dp),
-                        colors = ButtonDefaults.buttonColors(Color(0xff4e4e4f)),
-                        contentPadding = PaddingValues(6.dp)
-                    ) {
-                        Text(
-                            text = "充值", modifier = Modifier.fillMaxSize(),
-                            color = Color.White, fontSize = 15.sp, textAlign = TextAlign.Center
-                        )
-                    }
-                }
-
-                if (hasUpdate) {
-                    Row(
-                        modifier = Modifier
-                            .clickable { }
-                            .padding(start = 15.dp, end = 10.dp, top = 6.dp, bottom = 6.dp)
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = buildAnnotatedString {
-                                appendInlineContent(inlineId)
-                                append(" 最新升级包已发布")
-                            },
-                            modifier = Modifier.padding(start = 2.dp),
-                            color = Color(0xffff3b30),
-                            fontSize = 12.sp,
-                            inlineContent = inlineContent
-                        )
-                        Text(
-                            text = "马上点击升级，更新最新版本",
-                            color = Color.Black,
-                            fontSize = 12.sp,
-                            textAlign = TextAlign.End
-                        )
-                    }
-                }
-            }
-        }
-    }
-
+fun PreviewMineHeader() {
+    MineHeader(R.drawable.a, true, NavHostController(LocalContext.current))
 }
 
-@Preview
 @Composable
-fun PreviewInfoButton() {
+fun InfoButtons(action1: () -> Unit = { }, action2: () -> Unit = { }) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
         InfoButtonItem(iconId = R.drawable.mine_engage, "我的运营", 0xff3b3a95,
-            "243", "粉丝", "143", "获赞")
+            "243", "粉丝", "143", "获赞", action = action1)
         Spacer(modifier = Modifier.height(8.dp))
         InfoButtonItem(iconId = R.drawable.mine_follow, "我的关注", 0xff36914d,
-            "8811", "作者", "2143", "主题")
+            "8811", "作者", "2143", "主题", action = {})
     }
 }
+
+@Preview
+@Composable
+fun PreviewInfoButtons() {
+    InfoButtons()
+}
+
 
 @Composable
 fun InfoButtonItem(
@@ -724,9 +465,8 @@ fun InfoButtonItem(
     }
 }
 
-@Preview
 @Composable
-fun PreviewMineContent() {
+fun MineContent() {
     val scroll = rememberScrollState()
     Column(
         modifier = Modifier
@@ -739,6 +479,12 @@ fun PreviewMineContent() {
         LatestArticleItem()
         LatestTopicItem()
     }
+}
+
+@Preview
+@Composable
+fun PreviewMineContent() {
+    MineContent()
 }
 
 @Composable
@@ -803,7 +549,6 @@ fun MineItemHeader(subtitle: String, title: String, itemCounts: Int) {
     }
 }
 
-@Preview
 @Composable
 fun LatestVideoItem() {
     Column(
@@ -811,7 +556,6 @@ fun LatestVideoItem() {
             .fillMaxWidth()
             .padding(top = 8.dp)
             .background(Color.White, shape = RoundedCornerShape(4.dp))
-
             .clickable { Log.i("Arthur_test", "click video item") },
     ) {
         MineItemHeader("发布了新的视频", "这是视频的标题啊啊啊啊啊啊啊啊啊", 0)
@@ -880,6 +624,11 @@ fun LatestVideoItem() {
 }
 
 @Preview
+@Composable
+fun PreviewLatestVideoItem() {
+    LatestVideoItem()
+}
+
 @Composable
 fun LatestArticleItem() {
     Column(
@@ -1025,6 +774,11 @@ fun LatestArticleItem() {
 
 @Preview
 @Composable
+fun PreviewLatestArticleItem() {
+    LatestArticleItem()
+}
+
+@Composable
 fun LatestTopicItem() {
     Column(
         modifier = Modifier
@@ -1067,6 +821,11 @@ fun LatestTopicItem() {
 }
 
 @Preview
+@Composable
+fun PreviewLatestTopicItem() {
+    LatestTopicItem()
+}
+
 @Composable
 fun TopicVideoItems(imgId: Int = R.drawable.i) {
     val isVideoUnlocked = false
@@ -1112,6 +871,12 @@ fun TopicVideoItems(imgId: Int = R.drawable.i) {
     }
 }
 
+@Preview
+@Composable
+fun PreviewTopicVideoItems() {
+    TopicVideoItems(R.drawable.i)
+}
+
 @Composable
 fun MineScreen(navController: NavHostController) {
     Scaffold(
@@ -1144,8 +909,8 @@ fun MineScreen(navController: NavHostController) {
                 .padding(paddings)
         ) {
             MineHeader(imgId = R.drawable.a, isPlan = true, navController = navController)
-            PreviewInfoButton()
-            PreviewMineContent()
+            InfoButtons(action1 = { navController.navigateToMyEngage() })
+            MineContent()
         }
     }
 }

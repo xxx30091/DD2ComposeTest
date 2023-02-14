@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.promote.RecommendationVideoFragment">
+        tools:context=".ui.fagment.promote.RecommendationVideoFragment">
 
         <androidx.compose.ui.platform.ComposeView
             android:id="@+id/recommendationCompose"

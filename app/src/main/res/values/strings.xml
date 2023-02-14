@@ -10,4 +10,17 @@
 
     <string name="string_promote_setting">推送设置</string>
     <string name="string_promote_history">推送历史</string>
+
+    <string name="engage_status">營運動態</string>
+    <string name="engage_red_coin_incoming">紅幣收入</string>
+    <string name="engage_unlocked_counts">被解鎖數</string>
+    <string name="engage_promote_tools">推廣工具</string>
+
+    <string name="portfolio_tab_video">視頻</string>
+    <string name="portfolio_tab_video_topic">視頻主題</string>
+    <string name="portfolio_tab_share_topic">必看主題</string>
+    <string name="portfolio_tab_request_topic">用戶求片</string>
+    <string name="portfolio_tab_article_topic">文章主題</string>
+    <string name="portfolio_tab_article">必看文章</string>
+    <string name="portfolio_tab_question">用戶提問</string>
 </resources>

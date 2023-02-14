@@ -278,7 +278,7 @@ fun PayChooseCellSmall(amount: Double = 150.0, discount: Int = 10, isBest: Boole
 
 @Preview
 @Composable
-fun PayTimeChoose(remainTimes: Int = 1) {
+fun PayTimeChoose(remainTimes: Int = 0) {
     Column(
         modifier = Modifier
             .fillMaxWidth()

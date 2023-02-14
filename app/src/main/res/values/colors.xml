@@ -12,4 +12,7 @@
     <color name="color_d2d2d2">#d2d2d2</color>
     <color name="color_f3f3f3">#f3f3f3</color>
 
+    <color name="color_default_text_view">#8A000000</color>
+
+
 </resources>
