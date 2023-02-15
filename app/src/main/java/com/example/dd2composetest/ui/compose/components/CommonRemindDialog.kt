@@ -15,7 +15,7 @@ import androidx.compose.ui.window.Dialog
 import com.example.dd2composetest.R
 
 @Composable
-fun CommonAlertDialog(
+fun CommonRemindDialog(
     setShowDialog: (Boolean) -> Unit,
     title: String,
     content: String,
@@ -73,8 +73,8 @@ fun CommonAlertDialog(
     }
 }
 
-@Preview
-@Composable
-fun PreviewCommonAlertDialog() {
-    CommonAlertDialog(setShowDialog = {}, title = "提醒", content = "內容", action = {})
-}
+//@Preview
+//@Composable
+//fun PreviewCommonAlertDialog() {
+//    CommonRemindDialog(setShowDialog = {}, title = "提醒", content = "內容", action = {})
+//}

@@ -1,4 +1,4 @@
-package com.example.dd2composetest.ui.compose.mine
+package com.example.dd2composetest.ui.compose.mine.mycoin
 
 import android.os.Build
 import android.util.Log

@@ -2,9 +2,7 @@ package com.example.dd2composetest
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -17,7 +15,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.*
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -29,6 +26,7 @@ import com.example.dd2composetest.ui.compose.components.datepicker.datePicker
 import com.example.dd2composetest.ui.compose.engage.myEngage
 import com.example.dd2composetest.ui.compose.login.login
 import com.example.dd2composetest.ui.compose.mine.*
+import com.example.dd2composetest.ui.compose.mine.myworks.myWorks
 import com.example.dd2composetest.ui.compose.payment.payChoose
 import com.example.dd2composetest.ui.compose.setting.setting
 import com.example.dd2composetest.ui.fagment.mine.MineFragment
@@ -38,11 +36,8 @@ import com.example.dd2composetest.ui.fagment.promote.PromoteSettingFragment
 import com.example.dd2composetest.ui.fagment.promote.RecommendationVideoFragment
 import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
-import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.NonDisposableHandle.parent
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -70,6 +65,7 @@ class MainActivity : AppCompatActivity() {
                     sheetBackgroundColor = Color.White
                 ) {
                     ComposeNavigation(this)
+
                 }
             }
         }

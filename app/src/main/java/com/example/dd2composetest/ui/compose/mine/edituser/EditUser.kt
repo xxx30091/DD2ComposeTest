@@ -1,4 +1,4 @@
-package com.example.dd2composetest.ui.compose.mine
+package com.example.dd2composetest.ui.compose.mine.edituser
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -53,6 +53,7 @@ import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import com.example.dd2composetest.R
 import com.example.dd2composetest.data.bean.UserData
+import com.example.dd2composetest.enum.BottomSheet
 import com.example.dd2composetest.enum.Screen
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.navigation.material.bottomSheet
@@ -60,8 +61,6 @@ import com.google.accompanist.navigation.material.bottomSheet
 /**
  *  Date: 2023.02.07
  */
-
-val addTagSheet = "sheet_add_tag"
 
 val userData = UserData(
     imageUrl = "https://i1.jueshifan.com/2f5221d51dedbc4f9f/205a28/7c077a81/204328d017a8fa4d8c26.png",
@@ -159,7 +158,7 @@ fun EditUserHeader(
         }
         val painter = rememberAsyncImagePainter(model = viewModel.userData.imageUrl)
         Image(
-            painter = painterResource(id = R.drawable.a),
+            painter = painter,
             contentDescription = "",
             modifier = Modifier
                 .padding(top = 18.dp)
@@ -529,7 +528,7 @@ fun UserTagItem(
             )
             .clip(RoundedCornerShape(20.dp))
             .clickable {
-                if (viewType == 1) navController.navigate(addTagSheet)
+                if (viewType == 1) navController.navigate(BottomSheet.ADD_USER_TAG.route)
                 else viewModel.onEditUserEvent(
                     EditUserEvent.RemoveUserTag(position)
                 )
@@ -679,7 +678,7 @@ fun NavGraphBuilder.editUser(navController: NavController) {
     composable(Screen.EDIT_USER_SCREEN.route) {
         EditUserScreen(navController = navController)
     }
-    bottomSheet(addTagSheet) {
+    bottomSheet(BottomSheet.ADD_USER_TAG.route) {
         AddUserTagSheet(navController = navController)
     }
 }

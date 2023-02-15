@@ -1,4 +1,4 @@
-package com.example.dd2composetest.ui.compose.mine
+package com.example.dd2composetest.ui.compose.mine.myworks
 
 import android.util.Log
 import androidx.compose.foundation.*
@@ -18,6 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -26,7 +27,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -38,16 +38,129 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.dd2composetest.MainActivity
 import com.example.dd2composetest.R
 import com.example.dd2composetest.data.bean.*
-import com.example.dd2composetest.data.mock.MockData
+import com.example.dd2composetest.enum.BottomSheet
 import com.example.dd2composetest.enum.Screen
-import com.example.dd2composetest.ui.compose.MineItemHeader
 import com.example.dd2composetest.ui.compose.components.*
-import com.example.dd2composetest.ui.compose.imgId
-import com.example.dd2composetest.ui.compose.videoUrl
 import com.example.dd2composetest.utils.DateUtils.getMinuteSecondTime
+import com.google.accompanist.flowlayout.FlowRow
+import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
+
+
+const val inlineArrow = "inlineArrow"
+const val inlineRemove = "inlineRemove"
+const val inlineEdit = "inlineEdit"
+const val inlineEye = "inlineEye"
+const val inlineLikeOutline = "inlineLikeOutline"
+const val inlineVideo = "inlineVideo"
+val myWorkInline = mapOf(
+    Pair(
+        inlineArrow,
+        InlineTextContent(
+            placeholder = Placeholder(
+                width = 24.sp,
+                height = 24.sp,
+                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+            )
+        ) {
+            Icon(
+                painter = painterResource(id = R.mipmap.arrow_right),
+                contentDescription = "",
+                modifier = Modifier.fillMaxSize(),
+                tint = Color(R.color.color_default_text_view)
+            )
+        }
+    ),
+    Pair(
+        inlineRemove,
+        InlineTextContent(
+            placeholder = Placeholder(
+                width = 24.sp,
+                height = 24.sp,
+                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+            )
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.topic_question_del),
+                contentDescription = "",
+                modifier = Modifier
+                    .padding(top = 4.dp, start = 0.dp, bottom = 4.dp)
+                    .size(15.dp),
+            )
+        }
+    ),
+    Pair(
+        inlineEdit,
+        InlineTextContent(
+            placeholder = Placeholder(
+                width = 24.sp,
+                height = 24.sp,
+                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+            )
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.topic_question_edit),
+                contentDescription = "",
+                modifier = Modifier
+                    .padding(top = 4.dp, start = 0.dp, bottom = 4.dp)
+                    .size(15.dp),
+            )
+        }
+    ),
+    Pair(
+        inlineEye,
+        InlineTextContent(
+            placeholder = Placeholder(
+                width = 24.sp,
+                height = 24.sp,
+                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+            )
+        ) {
+            Icon(
+                painter = painterResource(id = R.mipmap.eye),
+                contentDescription = "",
+                modifier = Modifier.padding(top = 4.dp, start = 4.dp, bottom = 4.dp),
+                tint = Color(R.color.color_default_text_view)
+            )
+        }
+    ),
+    Pair(
+        inlineLikeOutline,
+        InlineTextContent(
+            placeholder = Placeholder(
+                width = 24.sp,
+                height = 24.sp,
+                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+            )
+        ) {
+            Icon(
+                painter = painterResource(id = R.mipmap.like_outline),
+                contentDescription = "",
+                modifier = Modifier.padding(top = 4.dp, start = 4.dp, bottom = 4.dp),
+                tint = Color(R.color.color_default_text_view)
+            )
+        }
+    ),
+    Pair(
+        inlineVideo,
+        InlineTextContent(
+            placeholder = Placeholder(
+                width = 24.sp,
+                height = 24.sp,
+                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+            )
+        ) {
+            Icon(
+                painter = painterResource(id = R.mipmap.video),
+                contentDescription = "",
+                modifier = Modifier.padding(top = 4.dp, start = 4.dp, bottom = 4.dp),
+                tint = Color(R.color.color_default_text_view)
+            )
+        }
+    ),
+)
 
 @ExperimentalFoundationApi
 @ExperimentalTextApi
@@ -68,6 +181,12 @@ fun NavGraphBuilder.myWorks(navController: NavHostController, activity: MainActi
     composable(Screen.MY_WORKS_SCREEN.route) {
         MyWorksScreen(navController, activity)
     }
+    bottomSheet(BottomSheet.ADD_TOPIC.route) {
+        AddTopicSheet()
+    }
+    bottomSheet(BottomSheet.ADD_ARTICLE.route) {
+        AddArticleSheet()
+    }
 }
 
 fun NavHostController.navigateToMyWorks() {
@@ -84,6 +203,14 @@ fun MyWorkContent(
     activity: MainActivity,
     viewModel: MyWorkViewModel = hiltViewModel()
 ) {
+    viewModel.let {
+        it.getMyVideos()
+        it.getMyTopVideos()
+        it.getMyTopics()
+        it.getMyAskTopics()
+        it.getMyArticles()
+        it.getMyQuestions()
+    }
     val scope = rememberCoroutineScope()
     var tabPosition by remember {
         mutableStateOf(0)
@@ -99,9 +226,11 @@ fun MyWorkContent(
                             Log.i("Arthur_test", "添加視頻")
                         }
                         1 -> {
+                            navController.navigate(BottomSheet.ADD_TOPIC.route)
                             Log.i("Arthur_test", "添加主題")
                         }
                         2 -> {
+                            navController.navigate(BottomSheet.ADD_ARTICLE.route)
                             Log.i("Arthur_test", "添加文章")
                         }
                     }
@@ -244,6 +373,96 @@ fun MyWorkContent(
     }
 }
 
+@Composable
+fun AddTopicSheet(viewModel: MyWorkViewModel = hiltViewModel()) {
+    Box(
+        modifier = Modifier
+            .background(
+                color = Color.White,
+                shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)
+            )
+            .height(142.dp)
+            .fillMaxWidth()
+    ) {
+        Spacer(modifier = Modifier
+            .padding(top = 10.dp)
+            .width(40.dp)
+            .height(2.dp)
+            .background(Color(0XFF909090))
+            .align(Alignment.TopCenter)
+        )
+        Row(
+            modifier = Modifier
+                .align(Alignment.Center)
+        ) {
+            Column(
+                modifier = Modifier
+                    .paint(painter = painterResource(id = R.mipmap.share))
+                    .clip(RoundedCornerShape(9.dp))
+                    .clickable {  }
+                    .padding(start = 10.dp, top = 12.dp, end = 10.dp, bottom = 12.dp)
+            ) {}
+            Column(
+                modifier = Modifier
+                    .padding(start = 20.dp)
+                    .paint(painter = painterResource(id = R.mipmap.ask))
+                    .clip(RoundedCornerShape(9.dp))
+                    .clickable {  }
+                    .padding(start = 10.dp, top = 12.dp, bottom = 12.dp)
+            ) {}
+        }
+    }
+}
+
+@Composable
+fun AddArticleSheet(viewModel: MyWorkViewModel = hiltViewModel()) {
+    Box(
+        modifier = Modifier
+            .background(
+                color = Color.White,
+                shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)
+            )
+            .height(142.dp)
+            .fillMaxWidth()
+    ) {
+        Spacer(modifier = Modifier
+            .padding(top = 10.dp)
+            .width(40.dp)
+            .height(2.dp)
+            .background(Color(0XFF909090))
+            .align(Alignment.TopCenter)
+        )
+        Row(
+            modifier = Modifier
+                .align(Alignment.Center)
+        ) {
+            Column(
+                modifier = Modifier
+                    .paint(painter = painterResource(id = R.mipmap.bg_create_article))
+                    .clip(RoundedCornerShape(9.dp))
+                    .clickable {  }
+                    .padding(start = 10.dp, top = 12.dp, end = 10.dp, bottom = 12.dp)
+            ) {
+                Text(text = "創建文章", color = Color.White, fontSize = 16.sp)
+                Text(text = "分享你的故事，成就自我", modifier = Modifier.padding(top = 5.dp),
+                    color = Color.White, fontSize = 11.sp)
+            }
+            Column(
+                modifier = Modifier
+                    .padding(start = 20.dp)
+                    .paint(painter = painterResource(id = R.mipmap.bg_ask_question))
+                    .clip(RoundedCornerShape(9.dp))
+                    .clickable {  }
+                    .padding(start = 10.dp, top = 12.dp, bottom = 12.dp)
+            ) {
+                Text(text = "提個問題", color = Color.White, fontSize = 16.sp)
+                Text(text = "百萬網友為你答疑解惑", modifier = Modifier.padding(top = 5.dp),
+                    color = Color.White, fontSize = 11.sp)
+            }
+        }
+    }
+}
+
 @ExperimentalFoundationApi
 @ExperimentalTextApi
 @Composable
@@ -301,7 +520,7 @@ fun HotVideoList(
                         modifier = Modifier.fillParentMaxWidth(0.5f)
                     ) {
                         if (video != null) {
-                            VideoItem(video = video, true, navController)
+                            VideoItem(video = video, true, navController, viewModel)
                         }
                     }
                 }
@@ -351,8 +570,7 @@ fun VideoList(
         ) {
             items(videos) { video ->
                 if (video != null) {
-//                    FansVideoItem(viewModel, video, selection)
-                    VideoItem(video = video, false, navController)
+                    VideoItem(video = video, false, navController, viewModel)
                 }
             }
         }
@@ -365,12 +583,14 @@ fun VideoList(
 fun VideoItem(
     video: MyVideoBean,
     isHot: Boolean = true,
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: MyWorkViewModel
 ) {
     val showDialog = remember { mutableStateOf(false) }
     if (showDialog.value) {
         EditVideoDialog(
-            navController = navController, setShowDialog = { showDialog.value = it }, isHot = isHot
+            navController = navController, setShowEditDialog = { showDialog.value = it },
+            isHot = isHot, viewModel = viewModel, video = video
         )
     }
     Column(
@@ -381,19 +601,12 @@ fun VideoItem(
                 shape = RoundedCornerShape(12.dp)
             )
             .clip(RoundedCornerShape(12.dp))
-            .clickable {
-
-            }
             .combinedClickable(
                 onClick = {
                     // 解鎖/播放事件
                     Log.i("Arthur_test", "短按 解鎖/播放")
                 },
-                onLongClick = {
-//                    if (isHot) Log.i("Arthur_test", "長按取消置頂")
-//                    else Log.i("Arthur_test", "長按編輯置頂")
-                    showDialog.value = true
-                }
+                onLongClick = { showDialog.value = true }
             )
     ) {
         Box(
@@ -514,33 +727,53 @@ fun VideoItem(
 @Composable
 fun EditVideoDialog(
     navController: NavHostController,
-    setShowDialog: (Boolean) -> Unit,
-    isHot: Boolean
+    setShowEditDialog: (Boolean) -> Unit,
+    isHot: Boolean,
+    viewModel: MyWorkViewModel,
+    video: MyVideoBean
 ) {
+//    val showDialog = remember { mutableStateOf(true) }
+//    if (showDialog.value) {
+//        CommonRemindDialog(
+//            setShowDialog = { showDialog.value = it },
+//            title = "提醒",
+//            content = "是否確認刪除此視頻",
+//            action = {  } // 刪除事件
+//        )
+//    }
     Dialog(
-        onDismissRequest = { setShowDialog(false) },
+        onDismissRequest = { setShowEditDialog(false) },
     ) {
         Column(modifier = Modifier.background(Color.White)) {
             EditVideoDialogItem(title = "編輯") {
                 // 編輯事件
-                setShowDialog(false)
+                navController
+                setShowEditDialog(false)
             }
             EditVideoDialogItem(title = if (isHot) "取消置頂" else "置頂") {
                 // 置頂事件
-                setShowDialog(false)
+                viewModel.onEvent(
+                    if (isHot) MyWorkEvent.SetVideoNotTop(video.id)
+                    else MyWorkEvent.SetVideoTop(video)
+                )
+                setShowEditDialog(false)
             }
             EditVideoDialogItem(title = "刪除") {
-                // 刪除事件
-                setShowDialog(false)
+                setShowEditDialog(false)
+                viewModel.onEvent(
+                    MyWorkEvent.RemoveVideo(video.id)
+                )
+//                showDialog.value = true
             }
         }
     }
 }
 
-@Preview
+//@Preview
 @Composable
 fun PreviewEditVideoDialog() {
-    EditVideoDialog(navController = NavHostController(LocalContext.current), setShowDialog = {}, isHot = true)
+    EditVideoDialog(navController = NavHostController(LocalContext.current), setShowEditDialog = {},
+        isHot = true, viewModel = MyWorkViewModel(), video = MyVideoBean())
 }
 
 @Composable
@@ -559,10 +792,9 @@ fun EditVideoDialogItem(
     )
 }
 
-@Preview
 @Composable
 fun MyTopicScreen(
-    viewModel: MyWorkViewModel = MyWorkViewModel()
+    viewModel: MyWorkViewModel
 ) {
     Column(
         modifier = Modifier
@@ -627,122 +859,30 @@ fun MyTopicList(
         ) {
             items(topics) { topic ->
                 if (topic != null) {
-                    MyTopicItem(topicItem = topic)
+                    MyTopicItem(topicItem = topic, viewModel)
                 }
             }
         }
     }
 }
 
-const val inlineArrow = "inlineArrow"
-const val inlineRemove = "inlineRemove"
-const val inlineEye = "inlineEye"
-const val inlineLikeOutline = "inlineLikeOutline"
-const val inlineVideo = "inlineVideo"
-val myWorkInline = mapOf(
-    Pair(
-        inlineArrow,
-        InlineTextContent(
-            placeholder = Placeholder(
-                width = 24.sp,
-                height = 24.sp,
-                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
-            )
-        ) {
-            Icon(
-                painter = painterResource(id = R.mipmap.arrow_right),
-                contentDescription = "",
-                modifier = Modifier.fillMaxSize(),
-                tint = Color(R.color.color_default_text_view)
-            )
-        }
-    ),
-    Pair(
-        inlineRemove,
-        InlineTextContent(
-            placeholder = Placeholder(
-                width = 24.sp,
-                height = 24.sp,
-                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
-            )
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.topic_question_del),
-                contentDescription = "",
-                modifier = Modifier
-                    .padding(top = 4.dp, start = 0.dp, bottom = 4.dp)
-                    .size(15.dp),
-            )
-        }
-    ),
-    Pair(
-        inlineEye,
-        InlineTextContent(
-            placeholder = Placeholder(
-                width = 24.sp,
-                height = 24.sp,
-                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
-            )
-        ) {
-            Icon(
-                painter = painterResource(id = R.mipmap.eye),
-                contentDescription = "",
-                modifier = Modifier.padding(top = 4.dp, start = 4.dp, bottom = 4.dp),
-                tint = Color(R.color.color_default_text_view)
-            )
-        }
-    ),
-    Pair(
-        inlineLikeOutline,
-        InlineTextContent(
-            placeholder = Placeholder(
-                width = 24.sp,
-                height = 24.sp,
-                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
-            )
-        ) {
-            Icon(
-                painter = painterResource(id = R.mipmap.like_outline),
-                contentDescription = "",
-                modifier = Modifier.padding(top = 4.dp, start = 4.dp, bottom = 4.dp),
-                tint = Color(R.color.color_default_text_view)
-            )
-        }
-    ),
-    Pair(
-        inlineVideo,
-        InlineTextContent(
-            placeholder = Placeholder(
-                width = 24.sp,
-                height = 24.sp,
-                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
-            )
-        ) {
-            Icon(
-                painter = painterResource(id = R.mipmap.video),
-                contentDescription = "",
-                modifier = Modifier.padding(top = 4.dp, start = 4.dp, bottom = 4.dp),
-                tint = Color(R.color.color_default_text_view)
-            )
-        }
-    ),
-)
-
 @Composable
 fun MyTopicItem(
-    topicItem: TopicItem
+    topicItem: TopicItem,
+    viewModel: MyWorkViewModel
 ) {
     val showDialog = remember { mutableStateOf(false) }
     if (showDialog.value) {
-        CommonAlertDialog(
+        CommonRemindDialog(
             setShowDialog = {showDialog.value = it},
             title = "提醒",
             content = "是否下架該主題？",
-            action = {}
+            action = { viewModel.onEvent(MyWorkEvent.RemoveTopic(topicItem.id)) }
         )
     }
     Column(
         modifier = Modifier
+            .clickable {  }
             .padding(start = 15.dp, end = 15.dp)
     ) {
         Row(
@@ -815,32 +955,7 @@ fun MyTopicItem(
                 fontSize = 12.sp,
             )
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
-            Text(
-                text = buildAnnotatedString {
-                    appendInlineContent(inlineRemove)
-                    append("下架")
-                },
-                modifier = Modifier
-                    .padding(top = 2.dp, bottom = 6.dp)
-                    .background(
-                        color = Color(0XFFF6F6F6),
-                        shape = RoundedCornerShape(20.dp)
-                    )
-                    .clip(RoundedCornerShape(20.dp))
-                    .clickable { showDialog.value = true }
-                    .padding(start = 6.dp, top = 3.dp, end = 10.dp, bottom = 3.dp),
-                color = Color.Black,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                inlineContent = myWorkInline
-            )
-        }
+        MyWorkRemoveComponent(hasEdit = false, {}, { showDialog.value = true })
     }
 }
 
@@ -896,7 +1011,7 @@ fun MyAskTopicList(
         ) {
             items(request) { request ->
                 if (request != null) {
-                    MyAskTopicItem(item = request)
+                    MyAskTopicItem(item = request, viewModel)
                 }
             }
         }
@@ -904,14 +1019,16 @@ fun MyAskTopicList(
 }
 
 @Composable
-fun MyAskTopicItem(item: TopicAskItem) {
+fun MyAskTopicItem(item: TopicAskItem, viewModel: MyWorkViewModel) {
     val showDialog = remember { mutableStateOf(false) }
     if (showDialog.value) {
-        CommonAlertDialog(
+        CommonRemindDialog(
             setShowDialog = { showDialog.value = it },
             title = "提醒",
             content = "是否下架該主題？",
-            action = {}
+            action = {
+                viewModel.onEvent(MyWorkEvent.RemoveRequest(item.id))
+            }
         )
     }
     Column(
@@ -919,8 +1036,8 @@ fun MyAskTopicItem(item: TopicAskItem) {
             .fillMaxWidth()
             .padding(top = 2.dp)
             .background(Color.White)
+            .clickable {  }
             .padding(start = 15.dp, top = 8.dp, end = 15.dp, bottom = 8.dp)
-
     ) {
         Row(
             modifier = Modifier
@@ -990,27 +1107,38 @@ fun MyAskTopicItem(item: TopicAskItem) {
                 }
             }
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 4.dp),
-            horizontalArrangement = Arrangement.End
-        ) {
+        MyWorkRemoveComponent(false, {}, { showDialog.value = true })
+    }
+}
+
+@Composable
+fun MyWorkRemoveComponent(
+    hasEdit: Boolean = false,
+    actionEdit: () -> Unit = {},
+    actionRemove: () -> Unit = {}
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 4.dp),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (hasEdit) {
             Text(
                 text = buildAnnotatedString {
-                    appendInlineContent(inlineRemove)
-                    append("下架")
+                    appendInlineContent(inlineEdit)
+                    append("編輯")
                 },
                 modifier = Modifier
+                    .padding(end = 15.dp)
                     .background(
                         color = Color(0XFFF6F6F6),
                         shape = RoundedCornerShape(20.dp)
                     )
                     .clip(RoundedCornerShape(20.dp))
-                    .clickable {
-                        showDialog.value = true
-                    }
-                    .padding(start = 5.dp, top = 3.dp, end = 10.dp, bottom = 3.dp),
+                    .clickable { actionEdit.invoke() }
+                    .padding(start = 6.dp, top = 3.dp, end = 10.dp, bottom = 3.dp),
                 color = Color.Black,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
@@ -1018,6 +1146,25 @@ fun MyAskTopicItem(item: TopicAskItem) {
                 inlineContent = myWorkInline
             )
         }
+        Text(
+            text = buildAnnotatedString {
+                appendInlineContent(inlineRemove)
+                append("下架")
+            },
+            modifier = Modifier
+                .background(
+                    color = Color(0XFFF6F6F6),
+                    shape = RoundedCornerShape(20.dp)
+                )
+                .clip(RoundedCornerShape(20.dp))
+                .clickable { actionRemove.invoke() }
+                .padding(start = 6.dp, top = 3.dp, end = 10.dp, bottom = 3.dp),
+            color = Color.Black,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            inlineContent = myWorkInline
+        )
     }
 }
 
@@ -1054,54 +1201,117 @@ fun MyArticleScreen(
             )
         }
         when (articleType) {
-//            0 -> MyTopicList(viewModel = viewModel)
-//            1 -> MyAskTopicList(viewModel = viewModel)
+            0 -> MyArticleList(viewModel = viewModel)
+            1 -> MyQuestionList(viewModel = viewModel)
         }
     }
 }
 
 @Composable
-fun MyArticleList() {
-
+fun MyArticleList(
+    viewModel: MyWorkViewModel
+) {
+    val articles = viewModel.myArticles
+    if (articles.isNullOrEmpty()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = R.mipmap.article_icon), // question_icon
+                contentDescription = "",
+                modifier = Modifier.size(80.dp)
+            )
+            Text(
+                text = "暫無發布文章", // 暫無發起問題
+                modifier = Modifier.padding(top = 12.dp),
+                color = Color(R.color.color_default_text_view)
+            )
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(articles) { article ->
+                if (article != null) {
+                    MyArticleItem(article, viewModel)
+                }
+            }
+        }
+    }
 }
 
-@Preview
+//@Preview
 @Composable
 fun MyArticleItem(
-    item: TopicArticleItem = MockData().getMockMyArticles()[0]
+    item: TopicArticleItem
+//        = MockData().getMockMyArticles()[0]
+       ,
+    viewModel: MyWorkViewModel
 ) {
+    val showDialog = remember { mutableStateOf(false) }
+    if (showDialog.value) {
+        CommonRemindDialog(
+            setShowDialog = { showDialog.value = it },
+            title = "提醒",
+            content = "是否下架該文章？",
+            action = { viewModel.onEvent(MyWorkEvent.RemoveArticle(item.id)) }
+        )
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White, shape = RoundedCornerShape(4.dp))
-            .clickable { Log.i("Arthur_test", "click article item") },
+            .clickable { Log.i("Arthur_test", "click article item") }
+            .padding(8.dp),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 8.dp, end = 8.dp, top = 8.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 8.dp)
             ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (item.isQuality) {
+                        Text(
+                            text = "優質文章",
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                                .background(
+                                    color = Color(0xffff6969),
+                                    shape = RoundedCornerShape(2.dp)
+                                )
+                                .padding(2.dp),
+                            color = Color.White,
+                            fontSize = 10.sp
+                        )
+                    }
+                    Text(
+                        text = item.title,
+                        fontSize = 16.sp,
+                        color = Color(0xff3a3a3c),
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
                 Text(
-                    text = item.title,
-                    fontSize = 16.sp,
-                    color = Color(0xff3a3a3c),
-                    fontWeight = FontWeight.Bold,
+                    text = "發布日期 ${item.creationDate}",
+                    modifier = Modifier.padding(top = 8.dp),
+                    color = Color(R.color.color_default_text_view),
+                    fontSize = 14.sp,
                 )
                 Text(
                     text = item.content,
                     fontSize = 14.sp,
                     color = Color(0xff3a3a3c),
-                    modifier = Modifier
-                        .padding(top = 8.dp),
+                    modifier = Modifier.padding(top = 8.dp),
                     maxLines = 2
                 )
             }
-
+            // 單圖 沒影片
             if (item.imageUrls?.size == 1 && item.videos.isNullOrEmpty()) {
                 Image(
                     painter = rememberAsyncImagePainter(item.imageUrls?.get(0)),
@@ -1118,9 +1328,9 @@ fun MyArticleItem(
         if (!item.videos.isNullOrEmpty()) {
             Box(
                 modifier = Modifier
-                    .height(143.dp)
+                    .height(192.dp)
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(top = 8.dp, bottom = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -1129,7 +1339,7 @@ fun MyArticleItem(
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
-                Icon(
+                Image(
                     painter = painterResource(id = R.mipmap.play),
                     contentDescription = "",
                     modifier = Modifier
@@ -1144,31 +1354,39 @@ fun MyArticleItem(
         if (item.videos.isNullOrEmpty() && item.imageUrls?.size!! > 1) {
             Row(
                 modifier = Modifier
+                    .aspectRatio(4f / 1.5f)
                     .fillMaxWidth()
-                    .height(128.dp)
-                    .padding(start = 8.dp, end = 8.dp, top = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
+                verticalAlignment = Alignment.CenterVertically
                 ) {
                 Image(
                     painter = rememberAsyncImagePainter(model = item.imageUrls!![0]),
-                    modifier = Modifier.aspectRatio(1f / 1f),
+                    modifier = Modifier
+                        .aspectRatio(1f / 1f)
+                        .weight(1f),
                     contentDescription = "",
                     contentScale = ContentScale.Crop
                 )
                 Image(
                     painter = rememberAsyncImagePainter(model = item.imageUrls!![1]),
-                    modifier = Modifier.aspectRatio(1f / 1f),
+                    modifier = Modifier
+                        .aspectRatio(1f / 1f)
+                        .weight(1f),
                     contentDescription = "",
                     contentScale = ContentScale.Crop
                 )
 
-                when (imgId.size) {
-                    2 -> Spacer(modifier = Modifier.aspectRatio(1f / 1f))
+                when (item.imageUrls?.size) {
+                    2 -> Spacer(modifier = Modifier
+                        .aspectRatio(1f / 1f)
+                        .weight(1f))
                     else -> {
                         Image(
                             painter = rememberAsyncImagePainter(model = item.imageUrls!![2]),
-                            modifier = Modifier.aspectRatio(1f / 1f),
+                            modifier = Modifier
+                                .aspectRatio(1f / 1f)
+                                .weight(1f),
                             contentDescription = "",
                             contentScale = ContentScale.Crop
                         )
@@ -1179,17 +1397,30 @@ fun MyArticleItem(
 
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .padding(top = 8.dp, bottom = 8.dp)
+                .fillMaxWidth(),
+//            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            FlowRow(
+                modifier = Modifier,
+            ) {
+                for (i in 0 until item.tags.size) {
+                    ArticleTagItem(item.tags[i], position = i)
+                }
+            }
             Text(
-                text = "点赞 0  ∙  收藏 12  ∙  评论  112  ∙  观看 12",
+                text = "点赞 ${item.likeCount}  ∙  收藏 ${item.favoriteCount}  ∙  评论  ${item.commentCount}  ∙  观看 ${item.unlockCount}",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(start = 6.dp),
                 fontSize = 12.sp,
                 color = Color(0xffaeaeb2)
             )
+
         }
+        MyWorkRemoveComponent(true, {  }, { showDialog.value = true })
     }
 }
 
@@ -1215,15 +1446,113 @@ fun ArticleTagItem(title: String, position: Int) {
 }
 
 @Composable
-fun MyQuestionList() {
+fun MyQuestionList(viewModel: MyWorkViewModel) {
+    val questions = viewModel.myQuestions
+    if (questions.isNullOrEmpty()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = R.mipmap.question_icon),
+                contentDescription = "",
+                modifier = Modifier.size(80.dp)
+            )
+            Text(
+                text = "暫無發起問題",
+                modifier = Modifier.padding(top = 12.dp),
+                color = Color(R.color.color_default_text_view)
+            )
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(top = 5.dp)
+        ) {
+            items(questions) { question ->
+                if (question != null) {
+                    MyQuestionItem(question)
+                }
+            }
+        }
+    }
+}
 
+@Composable
+fun MyQuestionItem(
+    item: MyQuestionItem
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .clickable { }
+            .padding(15.dp)
+    ) {
+        Text(
+            text = item.content,
+            color = Color.Black,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1
+        )
+        if (item.qualityAnswer != null) {
+            Text(
+                text = "精選回答",
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .size(width = 52.dp, height = 14.dp)
+                    .background(
+                        color = Color(0xffFFE4E1),
+                        shape = RoundedCornerShape(topEnd = 10.dp)
+                    ),
+                color = Color(0xffFF6969),
+                fontSize = 10.sp,
+                textAlign = TextAlign.Center
+            )
+            Row(
+                modifier = Modifier
+                    .background(
+                        color = Color(0XFFF7F7F7),
+                        shape = RoundedCornerShape(2.dp)
+                    )
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = item.qualityAnswer?.title!!,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(46.dp)
+                        .padding(end = 8.dp),
+                    fontSize = 14.sp,
+                    maxLines = 2
+                )
+                Image(
+                    painter = rememberAsyncImagePainter(model = item.qualityAnswer?.coverUrl),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(62.dp)
+                        .clip(RoundedCornerShape(2.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            }
+        }
+        Text(
+            text = "收藏 ${item.favoriteCount}  ∙  回答  ${item.answerCount}  ∙  創建日期 ${item.creationDate}",
+            modifier = Modifier.padding(top = 10.dp),
+            color = Color(0xffa6a6a6),
+            fontSize = 12.sp
+        )
+    }
 }
 
 @ExperimentalFoundationApi
 @ExperimentalTextApi
-@Preview
+//@Preview
 @Composable
-fun PreviewMyWorkScreen() {
+fun PreviewMyWorkContent() {
     MyWorkContent(
         NavHostController(LocalContext.current), MainActivity())
 }

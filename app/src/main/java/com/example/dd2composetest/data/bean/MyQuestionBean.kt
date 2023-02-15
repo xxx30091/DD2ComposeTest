@@ -2,19 +2,19 @@ package com.example.dd2composetest.data.bean
 
 data class MyQuestionBean(
     val totalCount: Int,
-    val questions: List<MyQuestion>
+    val questions: List<MyQuestionItem>
 )
 
-data class MyQuestion(
+data class MyQuestionItem(
     val id: Int = 0,
     val content: String = "",
     val favoriteCount: Int = 0,
     val answerCount: Int = 0,
+    var qualityAnswer: QualityAnswer? = null,
     var creationDate: String? = "",
-    // 我的作品只用到以上5個
+    // 我的作品只用到以上
     var isAnswered: Boolean? = false, //当前用户是否已回答
     var favoriteDate: String? = "",
-    var qualityAnswer: QualityAnswer? = null,
     var user: User? = null
 )
 

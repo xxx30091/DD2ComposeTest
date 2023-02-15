@@ -24,7 +24,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.dd2composetest.R
+import com.example.dd2composetest.data.mock.MockData
 import com.example.dd2composetest.enum.Screen
 import com.example.dd2composetest.navigateSingleTopTo
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -43,7 +45,7 @@ fun Items(imgCount: Int = 3) {
                 .fillMaxWidth()
                 .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
         ) {
-            Image(painter = painterResource(id = R.drawable.a),
+            Image(painter = rememberAsyncImagePainter(model = MockData.url3),
                 contentDescription = "",
                 modifier = Modifier
                     .size(39.dp)
