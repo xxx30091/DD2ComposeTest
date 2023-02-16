@@ -21,7 +21,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.example.dd2composetest.R
 import com.example.dd2composetest.enum.Screen
-import com.example.dd2composetest.ui.compose.mine.navigateToEditUser
+import com.example.dd2composetest.ui.compose.mine.edituser.navigateToEditUser
 import com.example.dd2composetest.ui.compose.mine.myworks.navigateToMyWorks
 import com.google.accompanist.pager.ExperimentalPagerApi
 

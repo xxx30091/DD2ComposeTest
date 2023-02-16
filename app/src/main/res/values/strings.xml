@@ -23,4 +23,12 @@
     <string name="portfolio_tab_article_topic">文章主題</string>
     <string name="portfolio_tab_article">必看文章</string>
     <string name="portfolio_tab_question">用戶提問</string>
+
+    <!--  date range picker  -->
+    <string name="picker_range_header_unselected">開始日期 - 結束日期</string>
+    <string name="picker_range_header_only_start_selected">%1$s– 結束日期</string>
+    <string name="picker_range_header_only_end_selected">開始日期 – %1$s</string>
+    <string name="picker_range_header_selected">%1$s – %2$s</string>
+    <string name="picker_range_header_title">選擇日期範圍</string>
+    <string name="picker_range_confirm">儲存</string>
 </resources>

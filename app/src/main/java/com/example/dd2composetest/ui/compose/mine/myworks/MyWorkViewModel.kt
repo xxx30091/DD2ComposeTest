@@ -83,6 +83,7 @@ class MyWorkViewModel @Inject constructor() : ViewModel() {
                 arr.remove(element = arr.find { it?.id == event.id } )
                 myArticles = arr
             }
+            else -> {}
         }
     }
 

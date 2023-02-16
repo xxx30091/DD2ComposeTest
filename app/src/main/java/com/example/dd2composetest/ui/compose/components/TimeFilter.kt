@@ -29,6 +29,7 @@ import androidx.navigation.NavHostController
 import com.example.dd2composetest.MainActivity
 import com.example.dd2composetest.R
 import com.example.dd2composetest.ui.compose.mine.*
+import com.example.dd2composetest.ui.compose.mine.mycoin.navigateToDateRangePicker
 import com.example.dd2composetest.ui.compose.mine.myworks.MyWorkEvent
 import com.example.dd2composetest.ui.compose.mine.myworks.MyWorkViewModel
 import com.example.dd2composetest.utils.DateUtils
@@ -125,32 +126,32 @@ fun DateTimeFilter(
                 },
                 modifier = Modifier
                     .clickable {
-//                        navController.navigateToDateRangePicker()
+                        navController.navigateToDateRangePicker()
 //                        navController.navigateToCalendar()
-                        activity.let {
-                            dateRangePicker.show(it.supportFragmentManager, "")
-                            dateRangePicker.addOnPositiveButtonClickListener { selectedDate ->
-                                when (viewModel) {
-                                    is MyCoinViewModel -> {
-                                        viewModel.onEvent(MyCoinEvent.SelectDate(
-                                            Pair(
-                                                DateUtils.getDateString(selectedDate.first),
-                                                DateUtils.getDateString(selectedDate.second)
-                                            )
-                                        ))
-                                    }
-                                    is MyWorkViewModel -> {
-                                        viewModel.onEvent(MyWorkEvent.SelectDate(
-                                            Pair(
-                                                DateUtils.getDateString(selectedDate.first),
-                                                DateUtils.getDateString(selectedDate.second)
-                                            )
-                                        ))
-                                    }
-                                }
-                                dateRangePicker.onDestroy()
-                            }
-                        }
+//                        activity.let {
+//                            dateRangePicker.show(it.supportFragmentManager, "")
+//                            dateRangePicker.addOnPositiveButtonClickListener { selectedDate ->
+//                                when (viewModel) {
+//                                    is MyCoinViewModel -> {
+//                                        viewModel.onEvent(MyCoinEvent.SelectDate(
+//                                            Pair(
+//                                                DateUtils.getDateString(selectedDate.first),
+//                                                DateUtils.getDateString(selectedDate.second)
+//                                            )
+//                                        ))
+//                                    }
+//                                    is MyWorkViewModel -> {
+//                                        viewModel.onEvent(MyWorkEvent.SelectDate(
+//                                            Pair(
+//                                                DateUtils.getDateString(selectedDate.first),
+//                                                DateUtils.getDateString(selectedDate.second)
+//                                            )
+//                                        ))
+//                                    }
+//                                }
+//                                dateRangePicker.onDestroy()
+//                            }
+//                        }
                     },
                 fontSize = 14.sp,
                 inlineContent = inlineContent,

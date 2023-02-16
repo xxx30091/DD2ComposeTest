@@ -1,5 +1,7 @@
 package com.example.dd2composetest.ui.compose.mine.mycoin
 
+//import com.alirezamilani.persiandaterangepicker.DateRangePicker
+//import com.alirezamilani.persiandaterangepicker.persianCalendar.PersianCalendar
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -11,16 +13,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,17 +28,17 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.example.dd2composetest.MainActivity
-//import com.alirezamilani.persiandaterangepicker.DateRangePicker
-//import com.alirezamilani.persiandaterangepicker.persianCalendar.PersianCalendar
 import com.example.dd2composetest.R
 import com.example.dd2composetest.enum.Screen
 import com.example.dd2composetest.ui.compose.components.DateTimeFilter
 import com.example.dd2composetest.ui.compose.components.ToolBarType
 import com.example.dd2composetest.ui.compose.components.Toolbar
+import com.example.dd2composetest.ui.compose.components.datepicker.rangePicker.DateRangePicker
+import com.example.dd2composetest.ui.compose.components.datepicker.rangePicker.RangePickerCalendar
+import com.example.dd2composetest.ui.compose.mine.MyCoinViewModel
 import com.example.dd2composetest.ui.compose.payment.navigateToPayChoose
 import com.example.dd2composetest.utils.NumberFormatUtils
 import java.util.*
-import kotlin.math.floor
 
 /**
  * ====================
@@ -181,7 +179,6 @@ fun PreviewCoinDataItem() {
 }
 
 // type: 0 -> gold, 1 -> red
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MyCoinScreen(
     navController: NavHostController,
@@ -215,14 +212,12 @@ fun MyCoinScreen(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
-fun PreviewMyCoinScreen(){
+fun PreviewMyCoinScreen() {
     MyCoinScreen(navController = NavHostController(LocalContext.current), type = 0, goldCoinData, MainActivity())
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.myCoin(navController: NavHostController, activity: MainActivity) {
@@ -255,34 +250,14 @@ data class CoinData(
 
 val calendar = Calendar.getInstance()
 val thisYear = calendar.get(Calendar.YEAR)
-val thisMonth = calendar.get(Calendar.MONTH) + 1
+val thisMonth = calendar.get(Calendar.MONTH)
 val today = calendar.get(Calendar.DAY_OF_MONTH)
 
-//val start = MyCalendar().apply {
-//    setCalendarDate(thisYear - 1, thisMonth + 6, today)
-//}
-//val end = MyCalendar().apply {
-//    setCalendarDate(thisYear - 1, thisMonth + 6, today + 1)
-//}
-
-//val start = PersianCalendar().apply {
-//    setPersianDate(thisYear - 1, thisMonth + 6, today)
-//}
-//
-//val end = PersianCalendar().apply {
-//    setPersianDate(thisYear - 1, thisMonth + 6, today + 1)
-//}
-
-
-@Preview
-@Composable
-fun TestDatePicker() {
-//    DateRangePicker(
-//        modifier = Modifier,
-//        isRtl = false,
-//        onCloseClick = {},
-//        onConfirmClick = {start, end ->  }
-//    )
+val start = RangePickerCalendar().apply {
+    setCalendarDate(thisYear, thisMonth, today)
+}
+val end = RangePickerCalendar().apply {
+    setCalendarDate(thisYear, thisMonth, today + 1)
 }
 
 @Composable
@@ -291,18 +266,18 @@ fun TestDatePickerScreen(navController: NavHostController) {
         modifier = Modifier
             .fillMaxHeight()
     ) {
-//        DateRangePicker(
-//            modifier = Modifier,
-//            initialDates = start to end,
-//            yearRange = IntRange(2021, 2025),
-//            title = "",
-//            saveLabel = "",
-//            isRtl = false,
-//            onCloseClick = { navController.popBackStack() },
-//            onConfirmClick = {start, end ->
-//                Log.i("Arthur_test", "選擇 start: ${start.persianLongDate}, end: ${end.persianShortDate}")
-//            }
-//        )
+        DateRangePicker(
+            modifier = Modifier,
+            initialDates = start to end,
+            yearRange = IntRange(2022, 2025),
+            title = "Select Date",
+            saveLabel = "",
+            isRtl = false,
+            onCloseClick = { navController.popBackStack() },
+            onConfirmClick = { start, end ->
+                Log.i("Arthur_test", "選擇 start: ${start.longDateString}, end: ${end.shortDateString}")
+            }
+        )
     }
 }
 

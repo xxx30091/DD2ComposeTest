@@ -55,6 +55,8 @@ import com.example.dd2composetest.R
 import com.example.dd2composetest.data.bean.UserData
 import com.example.dd2composetest.enum.BottomSheet
 import com.example.dd2composetest.enum.Screen
+import com.example.dd2composetest.ui.compose.mine.EditUserEvent
+import com.example.dd2composetest.ui.compose.mine.EditUserViewModel
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.navigation.material.bottomSheet
 

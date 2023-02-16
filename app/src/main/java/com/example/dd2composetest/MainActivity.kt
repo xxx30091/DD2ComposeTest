@@ -26,6 +26,9 @@ import com.example.dd2composetest.ui.compose.components.datepicker.datePicker
 import com.example.dd2composetest.ui.compose.engage.myEngage
 import com.example.dd2composetest.ui.compose.login.login
 import com.example.dd2composetest.ui.compose.mine.*
+import com.example.dd2composetest.ui.compose.mine.edituser.editUser
+import com.example.dd2composetest.ui.compose.mine.mycoin.dateRangePicker
+import com.example.dd2composetest.ui.compose.mine.mycoin.myCoin
 import com.example.dd2composetest.ui.compose.mine.myworks.myWorks
 import com.example.dd2composetest.ui.compose.payment.payChoose
 import com.example.dd2composetest.ui.compose.setting.setting

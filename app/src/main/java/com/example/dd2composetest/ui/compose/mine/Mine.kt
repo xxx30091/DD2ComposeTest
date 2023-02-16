@@ -36,8 +36,8 @@ import com.example.dd2composetest.R
 import com.example.dd2composetest.ThisApp
 import com.example.dd2composetest.enum.Screen
 import com.example.dd2composetest.ui.compose.engage.navigateToMyEngage
-import com.example.dd2composetest.ui.compose.mine.navigateToMyGoldCoin
-import com.example.dd2composetest.ui.compose.mine.navigateToMyRedCoin
+import com.example.dd2composetest.ui.compose.mine.mycoin.navigateToMyGoldCoin
+import com.example.dd2composetest.ui.compose.mine.mycoin.navigateToMyRedCoin
 import com.example.dd2composetest.ui.compose.payment.navigateToPayChoose
 import com.example.dd2composetest.ui.compose.setting.navigateToSetting
 
