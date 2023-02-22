@@ -40,7 +40,7 @@ class DateRangePickerState(
 
         for (i in 0 until (yearRange.last - yearRange.first + 1) * 12) {
             val currentCalendar = RangePickerDates.getCalendar(
-                year = yearRange.first + (i / 12), month = i % 12 + 1, day = 1
+                year = yearRange.first + (i / 12), month = i % 12, day = 1
             )
             if (currentCalendar.calendarYear == calendar.calendarYear && currentCalendar.calendarMonth == calendar.calendarMonth) {
                 position = i
@@ -120,7 +120,6 @@ class DateRangePickerState(
         ) {
             return true
         }
-
         return false
     }
 
@@ -162,13 +161,8 @@ class DateRangePickerState(
             setCommonDay(1)
             val day = calendar[Calendar.DAY_OF_WEEK]
 
-
-
             // When day is Saturday, the above line returns value equal 7 and this isn't be useful,
             // must be convert to 0
-            Log.i("Arthur_test", "date_range_picker_state, day of week: $day, ${Calendar.DAY_OF_WEEK}")
-            Log.i("Arthur_test", "date_range_picker_state, calendar date: ${calendar.calendarYear}, ${calendar.calendarMonth}, ${calendar.calendarDay}")
-            Log.i("Arthur_test", "date_range_picker_state, date: ${calendarYear}, ${calendarMonth}, $calendarDay")
 //            if (day == 7) 0 else day
             day - 1
         }
@@ -181,7 +175,7 @@ class DateRangePickerState(
     }
 
     /**
-     * Creates abbreviation of persian days of week
+     * Creates abbreviation of days of week
      */
     fun getDisplayNameOfDay(): List<String> = listOf(
         "日",
@@ -198,7 +192,7 @@ class DateRangePickerState(
      */
     fun updateHeader(): String {
         if (selectedStartDate == null && selectedEndDate == null) {
-            return resources.getString(com.example.dd2composetest.R.string.picker_range_header_unselected)
+            return resources.getString(R.string.picker_range_header_unselected)
         }
 
         if (selectedEndDate == null) {
@@ -221,16 +215,21 @@ class DateRangePickerState(
         )
     }
 
+    fun updateDateString(): Pair<String?, String?> {
+        val start = DateStrings.getFieldDateString(selectedStartDate!!)
+        val end = DateStrings.getFieldDateString(selectedEndDate!!)
+        return Pair(start, end)
+    }
+
     /**
      * @return number of week in month
      */
     fun getMaximumWeeks(firstDay: Int, numDays: Int): Int {
         return if ((firstDay == 6 && numDays >= 30) || (firstDay == 5 && numDays == 31) || (firstDay == 6 && numDays == 29)) 6
-        else if (firstDay == 0 && numDays == 28) 4 else 5
+        else if (firstDay == 0 && numDays == 28) 4
+        else 5
     }
 }
-
-
 
 /**
 * Remembers and creates an instance of [DateRangePickerState]

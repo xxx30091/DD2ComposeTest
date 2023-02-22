@@ -27,6 +27,7 @@ data class User(
     val id: Int = 0,
     val nickName: String = "",
     val imageUrl: String = "",
+    val isFollowed: Boolean = false // article/getArticle
 )
 
 data class UserTags(

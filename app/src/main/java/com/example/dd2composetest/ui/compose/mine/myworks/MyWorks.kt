@@ -39,8 +39,13 @@ import com.example.dd2composetest.MainActivity
 import com.example.dd2composetest.R
 import com.example.dd2composetest.data.bean.*
 import com.example.dd2composetest.enum.BottomSheet
+import com.example.dd2composetest.enum.DatePicker
 import com.example.dd2composetest.enum.Screen
+import com.example.dd2composetest.ui.compose.article.navigateToEditArticle
 import com.example.dd2composetest.ui.compose.components.*
+import com.example.dd2composetest.ui.compose.components.datepicker.rangePicker.DateRangePicker
+import com.example.dd2composetest.ui.compose.mine.mycoin.end
+import com.example.dd2composetest.ui.compose.mine.mycoin.start
 import com.example.dd2composetest.utils.DateUtils.getMinuteSecondTime
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.navigation.material.bottomSheet
@@ -170,7 +175,7 @@ fun MyWorksScreen(
     activity: MainActivity
 ) {
     Column {
-        Toolbar(navController = navController, title = "我的作品", rightBtnType = ToolBarType.NORMAL_TOOLBAR)
+        Toolbar(navController = navController, title = "我的作品", toolbarType = ToolBarType.NORMAL_TOOLBAR)
         MyWorkContent(navController, activity)
     }
 }
@@ -187,11 +192,51 @@ fun NavGraphBuilder.myWorks(navController: NavHostController, activity: MainActi
     bottomSheet(BottomSheet.ADD_ARTICLE.route) {
         AddArticleSheet()
     }
+    composable(DatePicker.MY_WORK_RANGE_PIKER.route) { navBackStackEntry ->
+        val parent = remember(navBackStackEntry) {
+            navController.getBackStackEntry(Screen.MY_WORKS_SCREEN.route)
+        }
+        MyWorkDatePicker(navController, viewModel = hiltViewModel(parent))
+    }
 }
 
 fun NavHostController.navigateToMyWorks() {
     navigate(Screen.MY_WORKS_SCREEN.route) {
         launchSingleTop = true
+    }
+}
+
+fun NavHostController.navigateToMyWorkDatePicker() {
+    navigate(DatePicker.MY_WORK_RANGE_PIKER.route) {
+        launchSingleTop = true
+    }
+}
+
+@Composable
+fun MyWorkDatePicker(navController: NavHostController, viewModel: MyWorkViewModel) {
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+    ) {
+        DateRangePicker(
+            modifier = Modifier,
+            initialDates = start to end,
+            yearRange = IntRange(2023, 2050),
+            title = "Select Date",
+            saveLabel = "儲存",
+            isRtl = false,
+            onCloseClick = { navController.popBackStack() },
+            onConfirmClick = { start, end ->
+                Log.i("Arthur_test", "選擇 start: ${start.longDateString}, end: ${end.shortDateString}")
+                viewModel.onEvent(MyWorkEvent.SelectDate(
+                    Pair(
+                        start.selectedDateString,
+                        end.selectedDateString
+                    )
+                ))
+                navController.popBackStack()
+            }
+        )
     }
 }
 
@@ -222,17 +267,9 @@ fun MyWorkContent(
             IconButton(
                 onClick = {
                     when (tabPosition) {
-                        0 -> {
-                            Log.i("Arthur_test", "添加視頻")
-                        }
-                        1 -> {
-                            navController.navigate(BottomSheet.ADD_TOPIC.route)
-                            Log.i("Arthur_test", "添加主題")
-                        }
-                        2 -> {
-                            navController.navigate(BottomSheet.ADD_ARTICLE.route)
-                            Log.i("Arthur_test", "添加文章")
-                        }
+                        0 -> { Log.i("Arthur_test", "添加視頻") }
+                        1 -> navController.navigate(BottomSheet.ADD_TOPIC.route)
+                        2 -> navController.navigate(BottomSheet.ADD_ARTICLE.route)
                     }
                 },
                 modifier = Modifier.clip(CircleShape)
@@ -365,8 +402,8 @@ fun MyWorkContent(
             ) { index ->
                 when (index) {
                     0 -> MyVideoScreen(navController = navController, activity = activity, viewModel)
-                    1 -> MyTopicScreen(viewModel)
-                    2 -> MyArticleScreen(viewModel)
+                    1 -> MyTopicScreen(navController, viewModel)
+                    2 -> MyArticleScreen(navController, viewModel)
                 }
             }
         }
@@ -399,7 +436,7 @@ fun AddTopicSheet(viewModel: MyWorkViewModel = hiltViewModel()) {
                 modifier = Modifier
                     .paint(painter = painterResource(id = R.mipmap.share))
                     .clip(RoundedCornerShape(9.dp))
-                    .clickable {  }
+                    .clickable { }
                     .padding(start = 10.dp, top = 12.dp, end = 10.dp, bottom = 12.dp)
             ) {}
             Column(
@@ -407,7 +444,7 @@ fun AddTopicSheet(viewModel: MyWorkViewModel = hiltViewModel()) {
                     .padding(start = 20.dp)
                     .paint(painter = painterResource(id = R.mipmap.ask))
                     .clip(RoundedCornerShape(9.dp))
-                    .clickable {  }
+                    .clickable { }
                     .padding(start = 10.dp, top = 12.dp, bottom = 12.dp)
             ) {}
         }
@@ -440,7 +477,7 @@ fun AddArticleSheet(viewModel: MyWorkViewModel = hiltViewModel()) {
                 modifier = Modifier
                     .paint(painter = painterResource(id = R.mipmap.bg_create_article))
                     .clip(RoundedCornerShape(9.dp))
-                    .clickable {  }
+                    .clickable { }
                     .padding(start = 10.dp, top = 12.dp, end = 10.dp, bottom = 12.dp)
             ) {
                 Text(text = "創建文章", color = Color.White, fontSize = 16.sp)
@@ -452,7 +489,7 @@ fun AddArticleSheet(viewModel: MyWorkViewModel = hiltViewModel()) {
                     .padding(start = 20.dp)
                     .paint(painter = painterResource(id = R.mipmap.bg_ask_question))
                     .clip(RoundedCornerShape(9.dp))
-                    .clickable {  }
+                    .clickable { }
                     .padding(start = 10.dp, top = 12.dp, bottom = 12.dp)
             ) {
                 Text(text = "提個問題", color = Color.White, fontSize = 16.sp)
@@ -479,6 +516,7 @@ fun MyVideoScreen(
             endDate = viewModel.endDate,
             placeType = TimeFilterType.SHOW_COUNTS.type,
             videoCount = viewModel.videos.size,
+            setDate = { navController.navigateToMyWorkDatePicker() },
             activity = activity,
             viewModel = viewModel
         )
@@ -794,6 +832,7 @@ fun EditVideoDialogItem(
 
 @Composable
 fun MyTopicScreen(
+    navController: NavHostController,
     viewModel: MyWorkViewModel
 ) {
     Column(
@@ -882,7 +921,7 @@ fun MyTopicItem(
     }
     Column(
         modifier = Modifier
-            .clickable {  }
+            .clickable { }
             .padding(start = 15.dp, end = 15.dp)
     ) {
         Row(
@@ -1036,7 +1075,7 @@ fun MyAskTopicItem(item: TopicAskItem, viewModel: MyWorkViewModel) {
             .fillMaxWidth()
             .padding(top = 2.dp)
             .background(Color.White)
-            .clickable {  }
+            .clickable { }
             .padding(start = 15.dp, top = 8.dp, end = 15.dp, bottom = 8.dp)
     ) {
         Row(
@@ -1170,6 +1209,7 @@ fun MyWorkRemoveComponent(
 
 @Composable
 fun MyArticleScreen(
+    navController: NavHostController,
     viewModel: MyWorkViewModel
 ) {
     Column(
@@ -1201,7 +1241,7 @@ fun MyArticleScreen(
             )
         }
         when (articleType) {
-            0 -> MyArticleList(viewModel = viewModel)
+            0 -> MyArticleList(navController = navController, viewModel = viewModel)
             1 -> MyQuestionList(viewModel = viewModel)
         }
     }
@@ -1209,6 +1249,7 @@ fun MyArticleScreen(
 
 @Composable
 fun MyArticleList(
+    navController: NavHostController,
     viewModel: MyWorkViewModel
 ) {
     val articles = viewModel.myArticles
@@ -1235,7 +1276,7 @@ fun MyArticleList(
         ) {
             items(articles) { article ->
                 if (article != null) {
-                    MyArticleItem(article, viewModel)
+                    MyArticleItem(navController = navController, viewModel = viewModel, article)
                 }
             }
         }
@@ -1245,10 +1286,9 @@ fun MyArticleList(
 //@Preview
 @Composable
 fun MyArticleItem(
-    item: TopicArticleItem
-//        = MockData().getMockMyArticles()[0]
-       ,
-    viewModel: MyWorkViewModel
+    navController: NavHostController,
+    viewModel: MyWorkViewModel,
+    item: TopicArticleItem,
 ) {
     val showDialog = remember { mutableStateOf(false) }
     if (showDialog.value) {
@@ -1420,7 +1460,7 @@ fun MyArticleItem(
             )
 
         }
-        MyWorkRemoveComponent(true, {  }, { showDialog.value = true })
+        MyWorkRemoveComponent(true, { navController.navigateToEditArticle() }, { showDialog.value = true })
     }
 }
 

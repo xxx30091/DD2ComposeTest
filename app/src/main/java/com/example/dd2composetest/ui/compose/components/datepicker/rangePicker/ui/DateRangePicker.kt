@@ -10,16 +10,24 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.dd2composetest.R
 import com.example.dd2composetest.ui.compose.components.datepicker.rangePicker.ui.CalendarMonth
 import com.example.dd2composetest.ui.compose.components.datepicker.rangePicker.ui.HeaderDate
@@ -63,6 +71,9 @@ fun DateRangePicker(
     val headerTitle = title ?: stringResource(id = R.string.picker_range_header_title)
     val headerSaveLabel = saveLabel ?: stringResource(id = R.string.picker_range_confirm)
 
+    val startDate = remember { mutableStateOf("") }
+    val endDate = remember { mutableStateOf("") }
+
     CompositionLocalProvider(
         LocalLayoutDirection provides if (isRtl) LayoutDirection.Rtl else LayoutDirection.Ltr
     ) {
@@ -71,75 +82,142 @@ fun DateRangePicker(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // 顯示所選日期部分
-            HeaderDate(colors, state, headerSaveLabel, headerTitle, onCloseClick, onConfirmClick, )
+            val isListMode = remember {
+                mutableStateOf(true)
+            }
+            HeaderDate(
+                colors, state, headerSaveLabel, headerTitle,
+                onCloseClick, onConfirmClick, hasSelectedDate = true,
+                isListMode.value, setMode = {isListMode.value = it}
+            )
 
-            // 週日-週六 標題
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(7),
-                modifier = Modifier
-                    .size(
-                        width = (48 * 7).dp,
-                        height = 48.dp
-                    ),
-                userScrollEnabled = false
-            ) {
-                state.getDisplayNameOfDay().forEach { dayName ->
-                    item {
-                        Box(Modifier.size(48.dp)) {
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .wrapContentSize(Alignment.Center),
-                                text = dayName,
-//                                style = MaterialTheme.typography.bodyMedium.copy(
-//                                    color = MaterialTheme.colorScheme.onSurface
-//                                )
-                            )
+            if (isListMode.value) {
+                // 週日-週六 標題
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(7),
+                    modifier = Modifier
+                        .size(
+                            width = (48 * 7).dp,
+                            height = 48.dp
+                        ),
+                    userScrollEnabled = false
+                ) {
+                    state.getDisplayNameOfDay().forEach { dayName ->
+                        item {
+                            Box(Modifier.size(48.dp)) {
+                                Text(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .wrapContentSize(Alignment.Center),
+                                    text = dayName,
+                                )
+                            }
                         }
                     }
                 }
-            }
 
 
-            val listState = rememberLazyListState(
-                initialFirstVisibleItemIndex = state.position
-            )
+                val listState = rememberLazyListState(
+                    initialFirstVisibleItemIndex = state.position
+                )
 
-            // 月曆部分
-            LazyColumn(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .background(Color.White),
-                state = listState,
-                contentPadding = PaddingValues(horizontal = 12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                items(
-                    items = state.months,
-//                    key = { state.position },
-//                    key = { it.timeInMillis },
-                    contentType = { RangePickerCalendar::class }
-                ) { calendar ->
-                    Log.i("Arthur_test", "date_range_picker, ${state.months}")
-                    Text(
+                // 月曆部分
+                LazyColumn(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .background(Color.White),
+                    state = listState,
+                    contentPadding = PaddingValues(horizontal = 12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    items(
+                        items = state.months,
+                        contentType = { RangePickerCalendar::class }
+                    ) { calendar ->
+                        Text(
+                            modifier = Modifier
+                                .fillParentMaxWidth()
+                                .height(48.dp)
+                                .paddingFromBaseline(top = 32.dp)
+                                .padding(horizontal = 36.dp),
+                            text = state.getLongName(calendar),
+                        )
+                        CalendarMonth(
+                            state = state,
+                            isRtl = isRtl,
+                            colors = colors,
+                            calendar = calendar
+                        )
+                    }
+                }
+            } else {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+//                    state.updateDateString().first?.let {}
+                    TextField(
+                        value = startDate.value,
+                        onValueChange = { value ->
+                            startDate.value = value
+                        },
                         modifier = Modifier
-                            .fillParentMaxWidth()
-                            .height(48.dp)
-                            .paddingFromBaseline(top = 32.dp)
-                            .padding(horizontal = 36.dp),
-                        text = state.getLongName(calendar),
-//                        style = MaterialTheme.typography.titleSmall.copy(
-//                            color = MaterialTheme.colorScheme.onSurface
-//                        )
+                            .weight(1f)
+                            .padding(start = 62.dp, top = 20.dp),
+                        textStyle = TextStyle(
+                            fontSize = 16.sp,
+                            textAlign = TextAlign.Start
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions {
+                            //            isError = tag.value.count() > 4
+                        },
+                        label = {
+                            Text(
+                                text = "Start date", fontSize = 14.sp
+                            )
+                        },
+                        placeholder = { Text(text = "m/d/yy") },
+                        trailingIcon = {
+
+                        },
                     )
 
-                    CalendarMonth(
-                        state = state,
-                        isRtl = isRtl,
-                        colors = colors,
-                        calendar = calendar
+//                    state.updateDateString().second?.let {}
+                    TextField(
+                        value = endDate.value,
+                        onValueChange = { value ->
+                            endDate.value = value
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(top = 20.dp, end = 62.dp),
+                        textStyle = TextStyle(
+                            fontSize = 16.sp,
+                            textAlign = TextAlign.Start
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions {
+                            //            isError = tag.value.count() > 4
+                        },
+                        label = {
+                            Text(
+                                text = "End date", fontSize = 14.sp
+                            )
+                        },
+                        placeholder = { Text(text = "m/d/yy") },
+                        trailingIcon = {
+
+                        },
                     )
-//                    Log.i("Arthur_test", "${it.timeInMillis}")
                 }
             }
         }
@@ -160,61 +238,4 @@ fun DateRangePickerPreview() {
         initialDates = start to end,
         onCloseClick = {}
     ) { _, _ -> }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun CalendarComponent(
-    startDate: String = DateUtils.getTodayDate(),
-    endDate: String = DateUtils.getTodayDate(),
-    dateSelectedBack: (String, String) -> Unit
-) {
-    // 當前年月
-    var cYear by remember {
-        mutableStateOf(LocalDateTime.now().year)
-    }
-    var cMonth by remember {
-        mutableStateOf(LocalDateTime.now().month)
-    }
-
-    /**
-     * 選中日期
-     */
-//    var selectedDate by remember {
-//        mutableStateListOf(startDate, endDate)
-//    }
-
-
-}
-
-/**
- * 月份組件
- * @param year Int 當前年份
- * @param month Month 當前月份
- * @param selectDay List<String> 已選中的日期
- * @param preMonth Function0<Unit> 上個月點擊事件
- * @param nextMonth Function0<Unit> 下個月點擊事件
- * @param dayClick Function1<String, Unit>
- */
-@Composable
-fun MonthComponent(
-    year: Int,
-    month: Month,
-    selectDay: List<String>,
-    preMonth: () -> Unit,
-    nextMonth: () -> Unit,
-    dayClick: (String) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .background(Color.Black)
-            .padding(vertical = 20.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-        }
-    }
 }

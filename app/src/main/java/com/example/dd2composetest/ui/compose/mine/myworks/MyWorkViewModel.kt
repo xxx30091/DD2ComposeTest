@@ -100,32 +100,32 @@ class MyWorkViewModel @Inject constructor() : ViewModel() {
 
     fun getMyTopVideos() {
 //        topVideos = listOf()
-        topVideos = MockData().getMockMyTopVideos()
+        topVideos = MockData.getMockMyTopVideos()
     }
 
     fun getMyVideos() {
 //        videos = listOf()
-        videos = MockData().getMockMyVideos()
+        videos = MockData.getMockMyVideos()
     }
 
     fun getMyTopics() {
 //        myTopics = listOf()
-        myTopics = MockData().getMockMyTopics()
+        myTopics = MockData.getMockMyTopics()
     }
 
     fun getMyAskTopics() {
 //        myAskTopic = listOf()
-        myAskTopic = MockData().getMockMyMockAskTopics()
+        myAskTopic = MockData.getMockMyMockAskTopics()
     }
 
     fun getMyArticles() {
 //        myArticles = listOf()
-        myArticles = MockData().getMockMyArticles()
+        myArticles = MockData.getMockMyArticles()
     }
 
     fun getMyQuestions() {
 //        myQuestions = listOf()
-        myQuestions = MockData().getMockMyQuestions()
+        myQuestions = MockData.getMockMyQuestions()
     }
 
 }

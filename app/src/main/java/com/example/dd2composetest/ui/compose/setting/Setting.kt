@@ -68,10 +68,9 @@ fun SettingScreen(navController: NavHostController = NavHostController(LocalCont
         Toolbar(
             navController = navController,
             title = "設置",
-            rightBtnType = ToolBarType.LOGOUT_TOOLBAR,
-            otherAction1 = {
-                Preference.getInstance(ThisApp.instance).clear()
-            }
+            toolbarType = ToolBarType.HAS_RIGHT_BTN_TOOLBAR,
+            rightName = "登出",
+            onClickRight = { Preference.getInstance(ThisApp.instance).clear() }
         )
         SettingItem("修改密碼", "", false)
         SettingItem("註銷帳號", "", false)

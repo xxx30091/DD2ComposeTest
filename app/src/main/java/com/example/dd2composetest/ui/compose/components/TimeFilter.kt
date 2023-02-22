@@ -1,7 +1,5 @@
 package com.example.dd2composetest.ui.compose.components
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -28,11 +26,7 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.example.dd2composetest.MainActivity
 import com.example.dd2composetest.R
-import com.example.dd2composetest.ui.compose.mine.*
-import com.example.dd2composetest.ui.compose.mine.mycoin.navigateToDateRangePicker
-import com.example.dd2composetest.ui.compose.mine.myworks.MyWorkEvent
-import com.example.dd2composetest.ui.compose.mine.myworks.MyWorkViewModel
-import com.example.dd2composetest.utils.DateUtils
+import com.example.dd2composetest.ui.compose.mine.mycoin.MyCoinViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 
 const val clock = "clock"
@@ -94,7 +88,6 @@ val dateRangePicker = MaterialDatePicker
     .build()
 
 // placeType: 0 -> coin, 1 -> video
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DateTimeFilter(
     navController: NavHostController = NavHostController(LocalContext.current),
@@ -103,6 +96,9 @@ fun DateTimeFilter(
     placeType: Int = 1,
     videoCount: Int? = 30,
     showShadow: Boolean = true,
+    setDate: () -> Unit,
+    setFilter: () -> Unit = {},
+    sortType: String = "全部",
     activity: MainActivity,
     viewModel: ViewModel
 ) {
@@ -126,7 +122,9 @@ fun DateTimeFilter(
                 },
                 modifier = Modifier
                     .clickable {
-                        navController.navigateToDateRangePicker()
+                        setDate.invoke()
+
+//                        navController.navigateToDateRangePicker()
 //                        navController.navigateToCalendar()
 //                        activity.let {
 //                            dateRangePicker.show(it.supportFragmentManager, "")
@@ -157,15 +155,14 @@ fun DateTimeFilter(
                 inlineContent = inlineContent,
                 textAlign = TextAlign.Center
             )
-
             if (placeType == 0) {
                 Text(
                     text = buildAnnotatedString {
                         appendInlineContent(filter)
-                        append("全部")
+                        append(sortType)
                         appendInlineContent(downArrow)
                     },
-                    modifier = Modifier.clickable {  },
+                    modifier = Modifier.clickable { setFilter.invoke() },
                     fontSize = 14.sp,
                     inlineContent = inlineContent,
                     textAlign = TextAlign.Center
@@ -173,7 +170,6 @@ fun DateTimeFilter(
             } else {
                 Text(
                     text = "視頻: $videoCount",
-//                    modifier = Modifier.clickable {  },
                 )
             }
         }
@@ -187,13 +183,13 @@ fun DateTimeFilter(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun PreviewDateTimeFilter() {
     DateTimeFilter(
         navController = NavHostController(LocalContext.current),
         placeType = TimeFilterType.SHOW_COUNTS.type,
+        setDate = {},
         activity = MainActivity(),
         viewModel = MyCoinViewModel()
     )

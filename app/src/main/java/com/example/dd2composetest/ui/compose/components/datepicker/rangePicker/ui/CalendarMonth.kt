@@ -22,7 +22,7 @@ import com.example.dd2composetest.ui.compose.components.datepicker.rangePicker.*
  */
 @Composable
 fun CalendarMonth(
-    modifier: Modifier = Modifier.background(Color.White),
+    modifier: Modifier = Modifier,
     isRtl: Boolean,
     state: DateRangePickerState = rememberDateRangePickerState(yearRange = IntRange(1400, 1401)),
     colors: DateRangePickerColors = DateRangePickerDefaults.colors(),
@@ -32,12 +32,15 @@ fun CalendarMonth(
     val datesList = remember { IntRange(1, numDays).toList() }
     val heightFactor = remember { state.getMaximumWeeks(firstDay, numDays) }
 
+    // 看能不能改成一開始就算好日期跟位置，而每一天的點擊事件去傳值就好
     LazyVerticalGrid(
         columns = GridCells.Fixed(7),
-        modifier = modifier.size(
-            width = (48 * 7).dp,
-            height = (heightFactor * 48).dp
-        ),
+        modifier = modifier
+            .background(Color.White)
+            .size(
+                width = (48 * 7).dp,
+                height = (heightFactor * 48).dp
+            ),
         userScrollEnabled = false
     ) {
 

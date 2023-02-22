@@ -3,7 +3,11 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/DD2ComposeTest" vcs="" />
+    <mapping directory="$PROJECT_DIR$/MyComposeTest" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/compose-richtext" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/compose_chat" vcs="" />
     <mapping directory="$PROJECT_DIR$/dd2-compose-test" vcs="" />
+    <mapping directory="$PROJECT_DIR$/material-design-icons" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/snippets" vcs="Git" />
   </component>
 </project>

@@ -1,19 +1,23 @@
 package com.example.dd2composetest.ui.compose.components.datepicker.rangePicker.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.dd2composetest.R
 import com.example.dd2composetest.ui.compose.components.datepicker.rangePicker.DateRangePickerColors
 import com.example.dd2composetest.ui.compose.components.datepicker.rangePicker.DateRangePickerDefaults
 import com.example.dd2composetest.ui.compose.components.datepicker.rangePicker.DateRangePickerState
@@ -33,7 +37,9 @@ fun HeaderDate(
     title: String,
     onCloseClick: () -> Unit,
     onConfirmClick: (start: RangePickerCalendar, end: RangePickerCalendar) -> Unit,
-    hasSelectedDate: Boolean = true
+    hasSelectedDate: Boolean = true,
+    isList: Boolean,
+    setMode: (Boolean) -> Unit
 ) {
     CompositionLocalProvider(LocalContentColor provides colors.headerContentColor) {
         Column(
@@ -85,22 +91,40 @@ fun HeaderDate(
                 text = title,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
-//                style = MaterialTheme.typography.labelMedium
             )
 
             // 日期
-            Text(
-                modifier = androidx.compose.ui.Modifier
+            Row(
+                modifier = Modifier
                     .paddingFromBaseline(36.sp)
-                    .padding(start = 50.dp, end = 50.dp)
+                    .padding(start = 50.dp)
                     .fillMaxWidth(),
-                text = state.updateHeader(),
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-//                style = MaterialTheme.typography.titleLarge.copy(
-//                    fontSize = 20.sp
-//                )
-            )
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    text = state.updateHeader(),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                )
+                IconButton(
+                    onClick = { setMode(!isList) },
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .then(Modifier.size(24.dp))
+                ) {
+                    Icon(
+                        painter = painterResource(
+                            id = if (isList) R.drawable.baseline_mode_edit_24
+                            else R.drawable.baseline_calendar_today_24
+                        ),
+                        contentDescription = "",
+                        tint = Color.White
+                    )
+                }
+            }
         }
     }
 }
@@ -118,6 +142,9 @@ fun PreviewHeaderDate() {
         saveLabel = "Save Label",
         title = "Title",
         onCloseClick = { /*TODO*/ },
-        onConfirmClick = {_, _  ->}
+        onConfirmClick = {_, _  ->},
+        hasSelectedDate = false,
+        isList = true,
+        {}
     )
 }

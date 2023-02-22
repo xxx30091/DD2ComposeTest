@@ -22,12 +22,12 @@ import androidx.navigation.compose.rememberNavController
 import com.example.dd2composetest.enum.Screen
 import com.example.dd2composetest.preference.Preference
 import com.example.dd2composetest.ui.compose.*
+import com.example.dd2composetest.ui.compose.article.editArticle
 import com.example.dd2composetest.ui.compose.components.datepicker.datePicker
 import com.example.dd2composetest.ui.compose.engage.myEngage
 import com.example.dd2composetest.ui.compose.login.login
 import com.example.dd2composetest.ui.compose.mine.*
 import com.example.dd2composetest.ui.compose.mine.edituser.editUser
-import com.example.dd2composetest.ui.compose.mine.mycoin.dateRangePicker
 import com.example.dd2composetest.ui.compose.mine.mycoin.myCoin
 import com.example.dd2composetest.ui.compose.mine.myworks.myWorks
 import com.example.dd2composetest.ui.compose.payment.payChoose
@@ -137,11 +137,12 @@ fun ComposeNavigation(activity: MainActivity) {
             myCoin(navController, activity)
             myData(navController)
             myWorks(navController, activity)
+            editArticle(navController)
             fansPromote(navController)
             recommendationVideo(navController)
             payChoose(navController)
             myEngage(navController)
-            dateRangePicker(navController)
+//            dateRangePicker(navController)
             datePicker(navController)
 
 //        composable(Screen.MY_DATA_SCREEN.route) {

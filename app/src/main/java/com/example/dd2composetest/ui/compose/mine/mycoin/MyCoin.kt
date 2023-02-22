@@ -2,20 +2,22 @@ package com.example.dd2composetest.ui.compose.mine.mycoin
 
 //import com.alirezamilani.persiandaterangepicker.DateRangePicker
 //import com.alirezamilani.persiandaterangepicker.persianCalendar.PersianCalendar
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -23,19 +25,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.example.dd2composetest.MainActivity
 import com.example.dd2composetest.R
+import com.example.dd2composetest.enum.DatePicker
 import com.example.dd2composetest.enum.Screen
 import com.example.dd2composetest.ui.compose.components.DateTimeFilter
 import com.example.dd2composetest.ui.compose.components.ToolBarType
 import com.example.dd2composetest.ui.compose.components.Toolbar
 import com.example.dd2composetest.ui.compose.components.datepicker.rangePicker.DateRangePicker
 import com.example.dd2composetest.ui.compose.components.datepicker.rangePicker.RangePickerCalendar
-import com.example.dd2composetest.ui.compose.mine.MyCoinViewModel
 import com.example.dd2composetest.ui.compose.payment.navigateToPayChoose
 import com.example.dd2composetest.utils.NumberFormatUtils
 import java.util.*
@@ -78,6 +82,46 @@ val goldCoinData = listOf(
     CoinData(0, -100, "解锁文章", "2022-07-13"),
 )
 
+@ExperimentalMaterialApi
+@ExperimentalComposeUiApi
+fun NavGraphBuilder.myCoin(navController: NavHostController, activity: MainActivity) {
+    composable(Screen.MY_GOLD_COIN_SCREEN.route) {
+        MyCoinScreen(navController = navController, 0, goldCoinData, activity)
+    }
+    composable(Screen.MY_RED_COIN_SCREEN.route) {
+        MyCoinScreen(navController = navController, 1, goldCoinData, activity)
+    }
+    composable(DatePicker.MY_GOLD_COIN_RANGE_PIKER.route) { navBackStackEntry ->
+        val parent = remember(navBackStackEntry)  {
+            navController.getBackStackEntry(Screen.MY_GOLD_COIN_SCREEN.route)
+        }
+        MyCoinDatePicker(navController, viewModel = hiltViewModel(parent))
+    }
+    composable(DatePicker.MY_RED_COIN_RANGE_PIKER.route) { navBackStackEntry ->
+        val parent = remember(navBackStackEntry)  {
+            navController.getBackStackEntry(Screen.MY_RED_COIN_SCREEN.route)
+        }
+        MyCoinDatePicker(navController, viewModel = hiltViewModel(parent))
+    }
+}
+
+fun NavHostController.navigateToMyGoldCoin() {
+    navigate(Screen.MY_GOLD_COIN_SCREEN.route) {
+        launchSingleTop = true
+    }
+}
+
+fun NavHostController.navigateToMyRedCoin() {
+    navigate(Screen.MY_RED_COIN_SCREEN.route) {
+        launchSingleTop = true
+    }
+}
+
+fun NavHostController.navigateToMyCoinDatePicker(coinType: Int) {
+    if (coinType == 0) navigate(DatePicker.MY_GOLD_COIN_RANGE_PIKER.route) { launchSingleTop = true }
+    else navigate(DatePicker.MY_RED_COIN_RANGE_PIKER.route) { launchSingleTop = true }
+}
+
 @Composable
 fun MyCoinHeader(type: Int, amount: Int, navController: NavHostController) {
     Column(
@@ -118,7 +162,7 @@ fun MyCoinHeader(type: Int, amount: Int, navController: NavHostController) {
     }
 }
 
-@Preview
+//@Preview
 @Composable
 fun PreviewMyCoinHeader() {
     MyCoinHeader(type = 0, amount = 40000, NavHostController(LocalContext.current))
@@ -172,7 +216,7 @@ fun CoinDataItem(data: CoinData, coinType: Int) {
     }
 }
 
-@Preview
+//@Preview
 @Composable
 fun PreviewCoinDataItem() {
     CoinDataItem(data = CoinData(0, 9900, "充值", "2022-07-13"), coinType = 0)
@@ -187,6 +231,29 @@ fun MyCoinScreen(
     activity: MainActivity,
     viewModel: MyCoinViewModel = hiltViewModel()
 ) {
+    val showDialog = remember { mutableStateOf(false) }
+    if (showDialog.value) {
+        CoinFilterDialog(
+            coinType = type,
+            sortType = if (type == 0) viewModel.goldFilterType else viewModel.redFilterType,
+            setShowDialog = { showDialog.value = it },
+            navController,
+            viewModel
+        )
+    }
+    val goldSort = when (viewModel.goldFilterType) {
+        0 -> "全部"
+        1 -> "金幣充值"
+        2 -> "金幣消費"
+        else -> "全部"
+    }
+    val redSort = when (viewModel.redFilterType) {
+        0 -> "全部"
+        1 -> "紅幣收入"
+        2 -> "紅幣支出"
+        3 -> "紅幣提現"
+        else -> "全部"
+    }
 
     Column(
         modifier = Modifier
@@ -196,8 +263,8 @@ fun MyCoinScreen(
         Toolbar(
             navController = navController,
             title = if (type == 0) "我的金幣" else "我的紅幣",
-            rightBtnType = ToolBarType.NORMAL_TOOLBAR,
-            otherAction1 = { viewModel.initDate() }
+            toolbarType = ToolBarType.NORMAL_TOOLBAR,
+            onClickLeft = { viewModel.initDate() }
         )
         MyCoinHeader(type = type, 40000, navController)
         DateTimeFilter(
@@ -206,7 +273,10 @@ fun MyCoinScreen(
             endDate = viewModel.endDate,
             placeType = 0,
             activity = activity,
-            viewModel = viewModel
+            viewModel = viewModel,
+            setDate = { navController.navigateToMyCoinDatePicker(type) },
+            setFilter = { showDialog.value = true },
+            sortType = if (type == 0) goldSort else redSort
         )
         MyCoinContent(type, goldCoinData)
     }
@@ -216,29 +286,6 @@ fun MyCoinScreen(
 @Composable
 fun PreviewMyCoinScreen() {
     MyCoinScreen(navController = NavHostController(LocalContext.current), type = 0, goldCoinData, MainActivity())
-}
-
-@ExperimentalMaterialApi
-@ExperimentalComposeUiApi
-fun NavGraphBuilder.myCoin(navController: NavHostController, activity: MainActivity) {
-    composable(Screen.MY_GOLD_COIN_SCREEN.route) {
-        MyCoinScreen(navController = navController, 0, goldCoinData, activity)
-    }
-    composable(Screen.MY_RED_COIN_SCREEN.route) {
-        MyCoinScreen(navController = navController, 1, goldCoinData, activity)
-    }
-}
-
-fun NavHostController.navigateToMyGoldCoin() {
-    navigate(Screen.MY_GOLD_COIN_SCREEN.route) {
-        launchSingleTop = true
-    }
-}
-
-fun NavHostController.navigateToMyRedCoin() {
-    navigate(Screen.MY_RED_COIN_SCREEN.route) {
-        launchSingleTop = true
-    }
 }
 
 data class CoinData(
@@ -255,13 +302,15 @@ val today = calendar.get(Calendar.DAY_OF_MONTH)
 
 val start = RangePickerCalendar().apply {
     setCalendarDate(thisYear, thisMonth, today)
+//    setCalendarDate(1970, thisMonth, today)
 }
 val end = RangePickerCalendar().apply {
     setCalendarDate(thisYear, thisMonth, today + 1)
+//    setCalendarDate(1970, thisMonth, today + 1)
 }
 
 @Composable
-fun TestDatePickerScreen(navController: NavHostController) {
+fun MyCoinDatePicker(navController: NavHostController, viewModel: MyCoinViewModel) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -269,27 +318,142 @@ fun TestDatePickerScreen(navController: NavHostController) {
         DateRangePicker(
             modifier = Modifier,
             initialDates = start to end,
-            yearRange = IntRange(2022, 2025),
+            yearRange = IntRange(2023, 2050),
             title = "Select Date",
-            saveLabel = "",
+            saveLabel = "儲存",
             isRtl = false,
             onCloseClick = { navController.popBackStack() },
             onConfirmClick = { start, end ->
                 Log.i("Arthur_test", "選擇 start: ${start.longDateString}, end: ${end.shortDateString}")
+                viewModel.onEvent(MyCoinEvent.SelectDate(
+                    Pair(
+                        start.selectedDateString,
+                        end.selectedDateString
+                    )
+                ))
+                navController.popBackStack()
             }
         )
     }
 }
 
-fun NavGraphBuilder.dateRangePicker(navController: NavHostController) {
-    composable(Screen.DATE_RANGE_PICKER_SCREEN.route) {
-        TestDatePickerScreen(navController)
+@Composable
+fun CoinFilterDialog(
+    coinType: Int,
+    sortType: Int,
+    setShowDialog: (Boolean) -> Unit,
+    navController: NavHostController,
+    viewModel: MyCoinViewModel
+) {
+    Dialog(
+        onDismissRequest = { setShowDialog(false) },
+        properties = DialogProperties(
+            dismissOnClickOutside = false
+        )
+    ) {
+        Box(modifier = Modifier
+//            .background(color = Color(0x52000000))
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                // 改用 recycler view?
+                Text(
+                    text = "全部",
+                    modifier = Modifier
+                        .padding(top = 40.dp, bottom = 10.dp)
+                        .clickable {
+                            viewModel.onEvent(
+                                if (coinType == 0) MyCoinEvent.SetGoldFilter(0)
+                                else MyCoinEvent.SetRedFilter(0)
+                            )
+                            setShowDialog(false)
+                        },
+                    color = if (sortType == 0) Color.White else Color(0XFF9a9898),
+                    fontSize = if (sortType == 0) 22.sp else 18.sp,
+                    fontWeight = if (sortType == 0) FontWeight.Bold else FontWeight.Normal
+                )
+                Text(
+                    text = if (coinType == 0) "金幣充值" else "紅幣收入",
+                    modifier = Modifier
+                        .padding(top = 40.dp, bottom = 10.dp)
+                        .clickable {
+                            viewModel.onEvent(
+                                if (coinType == 0) MyCoinEvent.SetGoldFilter(1)
+                                else MyCoinEvent.SetRedFilter(1)
+                            )
+                            setShowDialog(false)
+                        },
+                    color = if (sortType == 1) Color.White else Color(0XFF9a9898),
+                    fontSize = if (sortType == 1) 22.sp else 18.sp,
+                    fontWeight = if (sortType == 1) FontWeight.Bold else FontWeight.Normal
+                )
+                Text(
+                    text = if (coinType == 0) "金幣消費" else "紅幣支出",
+                    modifier = Modifier
+                        .padding(top = 40.dp, bottom = 10.dp)
+                        .clickable {
+                            viewModel.onEvent(
+                                if (coinType == 0) MyCoinEvent.SetGoldFilter(2)
+                                else MyCoinEvent.SetRedFilter(2)
+                            )
+                            setShowDialog(false)
+                        },
+                    color = if (sortType == 2) Color.White else Color(0XFF9a9898),
+                    fontSize = if (sortType == 2) 22.sp else 18.sp,
+                    fontWeight = if (sortType == 2) FontWeight.Bold else FontWeight.Normal
+                )
+                if (coinType != 0) {
+                    Text(
+                        text = "紅幣提現",
+                        modifier = Modifier
+                            .padding(top = 40.dp, bottom = 10.dp)
+                            .clickable {
+                                viewModel.onEvent(
+                                    MyCoinEvent.SetRedFilter(3)
+                                )
+                                setShowDialog(false)
+                            },
+                        color = if (sortType == 3) Color.White else Color(0XFF9a9898),
+                        fontSize = if (sortType == 3) 22.sp else 18.sp,
+                        fontWeight = if (sortType == 3) FontWeight.Bold else FontWeight.Normal
+                    )
+                }
+            }
+            IconButton(
+                onClick = { setShowDialog(false) },
+                modifier = Modifier
+                    .padding(bottom = 30.dp)
+                    .align(Alignment.BottomCenter)
+                    .clip(RoundedCornerShape(20.dp)),
+            ) {
+                Image(painter = painterResource(id = R.mipmap.cancel), contentDescription = "")
+            }
+        }
     }
 }
 
-fun NavHostController.navigateToDateRangePicker() {
-    navigate(Screen.DATE_RANGE_PICKER_SCREEN.route) {
-        launchSingleTop = true
-    }
-}
+//@Composable
+//fun CoinSortItem(title: String, ) {
+//    Text(
+//        text = "紅幣提現",
+//        modifier = Modifier
+//            .padding(top = 40.dp, bottom = 10.dp)
+//            .clickable {
+//                viewModel.onEvent(
+//                    MyCoinEvent.SetRedFilter(3)
+//                )
+//                setShowDialog(false)
+//            },
+//        color = if (sortType == 3) Color.White else Color(0XFF9a9898),
+//        fontSize = if (sortType == 3) 22.sp else 18.sp,
+//        fontWeight = if (sortType == 3) FontWeight.Bold else FontWeight.Normal
+//    )
+//}
+
+
 

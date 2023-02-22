@@ -42,3 +42,26 @@ data class MyArticleVideo(
     var isUnlocked: Boolean = false
 )
 
+// article/getArticle 回傳資料
+data class TopicArticleDetailItem(
+    var user: User = User(),
+    var questionCount: Int = 0,
+    var images: ArrayList<EditArticleData.Image> = arrayListOf(),
+    var videos: ArrayList<EditArticleData.Video>? = arrayListOf(),
+    var id: Int = 0,
+    var title: String = "",
+    var content: String = "",
+    var favoriteCount: Int = 0,
+    var likeCount: Int = 0,
+    var commentCount: Int = 0,
+    var unlockCount: Int = 0,
+    var isUnlocked: Boolean = false,
+    var isQuality: Boolean = false,
+    var isLiked: Boolean = false,
+    var isFavorite: Boolean = false,
+    var tags: ArrayList<String> = arrayListOf(),
+    var creationDate: String = "",
+    var isMyArticle: Boolean = false,
+    var sexType: List<Int> = listOf(),
+)
+

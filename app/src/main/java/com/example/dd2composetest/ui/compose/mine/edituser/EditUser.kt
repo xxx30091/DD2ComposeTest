@@ -1,28 +1,17 @@
 package com.example.dd2composetest.ui.compose.mine.edituser
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.*
 import androidx.compose.material.*
-import androidx.compose.material.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -36,7 +25,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -46,17 +34,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import coil.ImageLoader
-import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
-import coil.request.ImageRequest
 import com.example.dd2composetest.R
 import com.example.dd2composetest.data.bean.UserData
 import com.example.dd2composetest.enum.BottomSheet
 import com.example.dd2composetest.enum.Screen
-import com.example.dd2composetest.ui.compose.mine.EditUserEvent
-import com.example.dd2composetest.ui.compose.mine.EditUserViewModel
+import com.example.dd2composetest.ui.compose.components.AddTagSheet
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.navigation.material.bottomSheet
 
@@ -72,6 +55,30 @@ val userData = UserData(
     email = "17@ax2tw.net",
     tags = arrayListOf("可愛", "帥氣", "運動", "陽光", "結實")
 )
+
+@ExperimentalFoundationApi
+fun NavGraphBuilder.editUser(navController: NavController) {
+    composable(Screen.EDIT_USER_SCREEN.route) {
+        EditUserScreen(navController = navController)
+    }
+    bottomSheet(BottomSheet.ADD_USER_TAG.route) {
+        val parent = remember(it) {
+            navController.getBackStackEntry(Screen.EDIT_USER_SCREEN.route)
+        }
+        val viewModel: EditUserViewModel = hiltViewModel(parent)
+
+        AddTagSheet(
+            navController = navController,
+            onClick = { tag -> viewModel.onEditUserEvent(EditUserEvent.AddUserTag(tag)) }
+        )
+    }
+}
+
+fun NavHostController.navigateToEditUser() {
+    navigate(Screen.EDIT_USER_SCREEN.route) {
+        launchSingleTop = true
+    }
+}
 
 @ExperimentalFoundationApi
 @Composable
@@ -563,80 +570,6 @@ fun UserTagItem(
     }
 }
 
-@Composable
-fun AddUserTagSheet(
-    navController: NavController,
-    viewModel: EditUserViewModel = hiltViewModel()
-) {
-    val tag = remember {
-        mutableStateOf("")
-    }
-    var isError by remember {
-        mutableStateOf(false)
-    }
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                color = Color.White,
-                shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)
-            )
-            .padding(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 25.dp)
-    ) {
-        Box(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = "添加標籤",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.Center),
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = "完成",
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .clickable {
-                        if (tag.value
-                                .replace(" ", "")
-                                .isNotEmpty()
-                        ) {
-                            viewModel.onEditUserEvent(
-                                EditUserEvent.AddUserTag(tag.value)
-                            )
-                            navController.popBackStack()
-                        }
-                    },
-                color = Color(0XFFff9d3e)
-            )
-        }
-        TextField(
-            value = tag.value,
-            onValueChange = { value ->
-                if (tag.value.count() < 4) tag.value = value
-                isError = false
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp),
-            textStyle = TextStyle(
-                fontSize = 20.sp,
-                textAlign = TextAlign.Start
-            ),
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions {
-                isError = tag.value.count() > 4
-            },
-            placeholder = { Text(text = "請輸入標籤") },
-            trailingIcon = { Text(text = "${tag.value.count()}/4") }
-        )
-    }
-}
-
 enum class EditUserItemType(val itemType: Int) {
     EMAIL(1),
     NICKNAME(2),
@@ -667,28 +600,6 @@ fun PreviewLeaveEditDialog() {
 @Composable
 fun PreviewSelectOrientationDialog() {
     SelectOrientationDialog({})
-}
-
-@Preview
-@Composable
-fun PreviewAddTagBottomSheet() {
-    AddUserTagSheet(navController = NavController(LocalContext.current))
-}
-
-@ExperimentalFoundationApi
-fun NavGraphBuilder.editUser(navController: NavController) {
-    composable(Screen.EDIT_USER_SCREEN.route) {
-        EditUserScreen(navController = navController)
-    }
-    bottomSheet(BottomSheet.ADD_USER_TAG.route) {
-        AddUserTagSheet(navController = navController)
-    }
-}
-
-fun NavHostController.navigateToEditUser() {
-    navigate(Screen.EDIT_USER_SCREEN.route) {
-        launchSingleTop = true
-    }
 }
 
 fun selectImg() {

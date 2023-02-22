@@ -36,7 +36,6 @@ import com.example.dd2composetest.utils.DatePosition
 import com.example.dd2composetest.utils.DateUtils
 import java.time.LocalDateTime
 import java.time.Month
-import java.time.Year
 
 /**
  * 參考自
@@ -44,7 +43,6 @@ import java.time.Year
  * Date: 2023.02.01
  */
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendarComponent(
     startDate: String = DateUtils.getTodayDate(),
@@ -103,7 +101,6 @@ fun CalendarComponent(
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun PreviewCalendarComponent() {
@@ -113,7 +110,6 @@ fun PreviewCalendarComponent() {
 /**
  *
  */
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MonthComponent(
     year: Int,
@@ -190,7 +186,6 @@ fun MonthComponent(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun PreviewMonthComponent() {
@@ -243,13 +238,12 @@ fun PreviewDay() {
     Day(day = 3, position = DatePosition.SINGLE_1, dayClick = {})
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendarScreen(navController: NavHostController) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Toolbar(navController = navController, title = "", rightBtnType = ToolBarType.NORMAL_TOOLBAR)
+        Toolbar(navController = navController, title = "", toolbarType = ToolBarType.NORMAL_TOOLBAR)
         CalendarComponent(
             dateSelectedBack = { start, end ->
                 Log.i("Arthur_test", "開始$start 結束$end")
@@ -258,7 +252,6 @@ fun CalendarScreen(navController: NavHostController) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.datePicker(navController: NavHostController) {
     composable(Screen.CALENDAR_SCREEN.route) {
         CalendarScreen(navController)

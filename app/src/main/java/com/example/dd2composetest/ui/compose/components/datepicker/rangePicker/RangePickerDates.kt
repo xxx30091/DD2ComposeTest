@@ -12,7 +12,7 @@ class RangePickerDates {
         private val timeZone: TimeZone = TimeZone.getTimeZone("Asia/Taipei")
 
         /**
-         * Returns a [RangePickerCalendar] object in IRST time zone representing the first moment of current date.
+         * Returns a [RangePickerCalendar] object in Taipei time zone representing the first moment of current date.
          */
         fun getTodayCalendar() = RangePickerCalendar().also {
             it.set(Calendar.HOUR_OF_DAY, 0)
@@ -23,11 +23,11 @@ class RangePickerDates {
         }
 
         /**
-         * Returns a [RangePickerCalendar] object in IRST time zone representing the moment in input [RangePickerCalendar] object.
-         * An empty [Calendar] object in IRST will be return if input is null.
+         * Returns a [RangePickerCalendar] object in Taipei time zone representing the moment in input [RangePickerCalendar] object.
+         * An empty [Calendar] object in Taipei will be return if input is null.
          *
          * @param rawCalendar the Calendar object representing the moment to process.
-         * @return A [RangePickerCalendar] object in IRST time zone.
+         * @return A [RangePickerCalendar] object in Taipei time zone.
          */
         fun getCalendarOf(rawCalendar: RangePickerCalendar?): RangePickerCalendar {
             val calendar = RangePickerCalendar()
@@ -44,7 +44,7 @@ class RangePickerDates {
         }
 
         /**
-         * Returns an empty [RangePickerCalendar] in IRST time zone.
+         * Returns an empty [RangePickerCalendar] in Taipei time zone.
          */
         fun getCalendar(): RangePickerCalendar = getCalendarOf(null)
 
@@ -61,18 +61,18 @@ class RangePickerDates {
         }
 
         /**
-         * Returns a [RangePickerCalendar] object in IRST time zone representing the start of day in IRST represented in
+         * Returns a [RangePickerCalendar] object in Taipei time zone representing the start of day in Taipei represented in
          * the input [RangePickerCalendar] object, i.e., the time (fields smaller than a day) is stripped based on the
-         * IRST time zone.
+         * Taipei time zone.
          *
          * @param rawCalendar the [RangePickerCalendar] object representing the moment to process.
-         * @return A [RangePickerCalendar] object representing the start of day in IRST time zone.
+         * @return A [RangePickerCalendar] object representing the start of day in Taipei time zone.
          */
         private fun getDayCopy(rawCalendar: RangePickerCalendar?): Calendar {
-            val rawCalendarInIrst = getCalendarOf(rawCalendar)
+            val rawCalendarInTaipei = getCalendarOf(rawCalendar)
             val calendar = getCalendar()
-            calendar[rawCalendarInIrst[Calendar.YEAR], rawCalendarInIrst[Calendar.MONTH]] =
-                rawCalendarInIrst[Calendar.DAY_OF_MONTH]
+            calendar[rawCalendarInTaipei[Calendar.YEAR], rawCalendarInTaipei[Calendar.MONTH]] =
+                rawCalendarInTaipei[Calendar.DAY_OF_MONTH]
             return calendar
         }
 
@@ -80,8 +80,8 @@ class RangePickerDates {
          * Strips all information from the time in milliseconds at granularities more specific than day of
          * the month.
          *
-         * @param rawDate A long representing the time as IRST milliseconds from the epoch
-         * @return A canonical long representing the time as IRST milliseconds for the represented day.
+         * @param rawDate A long representing the time as Taipei milliseconds from the epoch
+         * @return A canonical long representing the time as Taipei milliseconds for the represented day.
          */
         fun canonicalYearMonthDay(rawDate: Long): Long {
             val rawCalendar = getCalendar()
@@ -90,6 +90,4 @@ class RangePickerDates {
             return sanitizedStartItem.timeInMillis
         }
     }
-
-
 }

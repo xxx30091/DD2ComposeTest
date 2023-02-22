@@ -118,9 +118,6 @@ fun CalendarDay(
                 )
                 .wrapContentSize(),
             color = if (selected) Color.White else Color.Black
-//            style = MaterialTheme.typography.bodyMedium.copy(
-//                color = colors.dateTextColor(selected).value
-//            )
         )
     }
 }

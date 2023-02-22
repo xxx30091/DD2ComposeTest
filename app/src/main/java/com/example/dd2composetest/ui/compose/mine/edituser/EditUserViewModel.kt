@@ -1,4 +1,4 @@
-package com.example.dd2composetest.ui.compose.mine
+package com.example.dd2composetest.ui.compose.mine.edituser
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -15,16 +15,8 @@ class EditUserViewModel @Inject constructor() : ViewModel() {
     var userData by mutableStateOf(UserData())
 
     init {
-//        userData = UserData(
-//            imageUrl = "https://i1.jueshifan.com/2f5221d51dedbc4f9f/205a28/7c077a81/204328d017a8fa4d8c26.png",
-//            nickName = "叫我大哥",
-//            gender = 1,
-//            sexOrientation = 3,
-//            email = "17@ax2tw.net",
-//            tags = arrayListOf("可愛", "帥氣", "運動", "陽光", "結實")
-//        )
         getUserData()
-        Log.i("Arthur_test", "EditUserViewModel init")
+        Log.i("Arthur_test", "EditUserViewModel init ${this.hashCode()}")
     }
 
     fun getUserData() {
