@@ -1,5 +1,6 @@
 package com.example.dd2composetest.ui.compose.mine.edituser
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -14,16 +15,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.Placeholder
-import androidx.compose.ui.text.PlaceholderVerticalAlign
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -231,6 +231,8 @@ fun EditUserInfo(navController: NavController, viewModel: EditUserViewModel = hi
                 }
             }
         }
+
+        SpanText()
     }
 }
 
@@ -604,6 +606,126 @@ fun PreviewSelectOrientationDialog() {
 
 fun selectImg() {
 
+}
+
+
+@Composable
+fun SpanText() {
+    Column(
+        modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+    ) {
+        val annotatedString = buildAnnotatedString {
+            append("By using ClickableText")
+
+            pushStringAnnotation(tag = "first_clickable", annotation = "click the first clickable text ")
+            withStyle(style = SpanStyle(color = Color.Red)) {
+                append(" first clickable")
+            }
+            pop()
+
+            append(" and ")
+
+            pushStringAnnotation(tag = "second_clickable", annotation = "click the second clickable text")
+
+            withStyle(style = SpanStyle(
+                color = Color.Black,
+                textDecoration = TextDecoration.Underline
+            )) {
+                append("second clickable")
+            }
+
+            pop()
+        }
+
+        ClickableText(text = annotatedString, style = MaterialTheme.typography.body1, onClick = { offset ->
+            annotatedString.getStringAnnotations(tag = "first_clickable", start = offset, end = offset).firstOrNull()?.let {
+                Log.d("test_clickable", it.item)
+            }
+
+            annotatedString.getStringAnnotations(tag = "second_clickable", start = offset, end = offset).firstOrNull()?.let {
+                // What you want to do
+                Log.d("test_clickable", it.item)
+            }
+        })
+    }
+
+//        val annotatedString = buildAnnotatedString {
+//            append("By joining, you agree to the ")
+//
+//            pushStringAnnotation(tag = "policy", annotation = "https://google.com/policy")
+////            withStyle(style = SpanStyle(color = MaterialTheme.colors.primary)) {
+////                append("privacy policy")
+////            }
+//            withStyle(style = SpanStyle(color = Color.Red)) {
+//                append("privacy policy")
+//            }
+//            pop()
+//
+//            append(" and ")
+//
+//            pushStringAnnotation(tag = "terms", annotation = "https://google.com/terms")
+//
+//            withStyle(style = SpanStyle(color = MaterialTheme.colors.primary)) {
+//                append("terms of use")
+//            }
+//
+//            pop()
+//        }
+//
+//        ClickableText(text = annotatedString, style = MaterialTheme.typography.body1, onClick = { offset ->
+//            annotatedString.getStringAnnotations(tag = "policy", start = offset, end = offset).firstOrNull()?.let {
+//                Log.d("policy URL", it.item)
+//            }
+//
+//            annotatedString.getStringAnnotations(tag = "terms", start = offset, end = offset).firstOrNull()?.let {
+//                Log.d("terms URL", it.item)
+//            }
+//        })
+//    }
+
+
+
+//    val annotatedLinkString: AnnotatedString = buildAnnotatedString {
+//
+//        val str = "Click this link to go to web site"
+//        val startIndex = str.indexOf("link")
+//        val endIndex = startIndex + 4
+//        append(str)
+//        addStyle(
+//            style = SpanStyle(
+//                color = Color(0xff64B5F6),
+//                fontSize = 18.sp,
+//                textDecoration = TextDecoration.Underline
+//            ), start = startIndex, end = endIndex
+//        )
+//
+//        // attach a string annotation that stores a URL to the text "link"
+//        addStringAnnotation(
+//            tag = "URL",
+//            annotation = "https://github.com",
+//            start = startIndex,
+//            end = endIndex
+//        )
+//
+//    }
+//
+//// UriHandler parse and opens URI inside AnnotatedString Item in Browse
+//    val uriHandler = LocalUriHandler.current
+//
+//// 🔥 Clickable text returns position of text that is clicked in onClick callback
+//    ClickableText(
+//        modifier = modifier
+//            .padding(16.dp)
+//            .fillMaxWidth(),
+//        text = annotatedLinkString,
+//        onClick = {
+//            annotatedLinkString
+//                .getStringAnnotations("URL", it, it)
+//                .firstOrNull()?.let { stringAnnotation ->
+//                    uriHandler.openUri(stringAnnotation.item)
+//                }
+//        }
+//    )
 }
 
 

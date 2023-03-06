@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.dd2composetest.data.bean.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,6 +14,8 @@ import javax.inject.Inject
 class EditUserViewModel @Inject constructor() : ViewModel() {
 
     var userData by mutableStateOf(UserData())
+
+    val value = MutableLiveData<Int>()
 
     init {
         getUserData()

@@ -429,11 +429,15 @@ class MockData {
                     id = 2,
                     url = url2
                 ),
+                EditArticleData.Image(
+                    id = 4,
+                    url = url4
+                ),
             ),
             videos = arrayListOf(
                 EditArticleData.Video(
                     id = 0,
-                    coverUrl = "",
+                    coverUrl = url3,
                     previewUrl = "",
                     isUnlocked = true
                 )
@@ -441,7 +445,7 @@ class MockData {
             id = 0,
             title = "動物圖片",
             content = "<article>氣候變遷帶來的災害...... \n  <image id=\"1\" />\n 這是一隻柴犬<video id=\"100\" />\n 這是也一隻柴犬" +
-                    "<image id=\"2\" />\n 滿滿的柴</article>",
+                    "<image id=\"2\" />\n 滿滿的柴<image id=\"4\" /></article>",
             favoriteCount = 99,
             likeCount = 999,
             commentCount = 69,
@@ -454,6 +458,394 @@ class MockData {
             creationDate = "2023-02-20",
             isMyArticle = true,
             sexType = listOf(0, 1, 2)
+        )
+
+        fun getMockEditArticles() = listOf(
+            TopicArticleDetailItem(
+                user = User(),
+                questionCount = 0,
+                images = arrayListOf(
+                    EditArticleData.Image(
+                        id = 1,
+                        url = url1
+                    ),
+                    EditArticleData.Image(
+                        id = 2,
+                        url = url2
+                    ),
+                    EditArticleData.Image(
+                        id = 4,
+                        url = url3
+                    ),
+                ),
+                videos = arrayListOf(),
+                id = 1,
+                title = "My_Topic_1",
+                content = "<article>This is a 3-pictures article \n \n1 <image id=\"1\" />\n 2 <image id=\"2\" />\n 3 <image id=\"3\" /></article>",
+                favoriteCount = 12,
+                likeCount = 0,
+                commentCount = 9,
+                unlockCount = 0,
+                isUnlocked = false,
+                isQuality = true,
+                isLiked = false,
+                isFavorite = false,
+                tags = arrayListOf("動物圖片", "毛孩", "柴犬"),
+                creationDate = "2023-01-14",
+                isMyArticle = true,
+                sexType = listOf(0)
+            ),
+            TopicArticleDetailItem(
+                user = User(),
+                questionCount = 0,
+                images = arrayListOf(
+                    EditArticleData.Image(
+                        id = 9,
+                        url = url9
+                    ),
+                    EditArticleData.Image(
+                        id = 6,
+                        url = url6
+                    ),
+                    EditArticleData.Image(
+                        id = 3,
+                        url = url3
+                    ),
+                ),
+                videos = arrayListOf(
+                    EditArticleData.Video(
+                        id = 0,
+                        coverUrl = url4,
+                        previewUrl = url4,
+                        isUnlocked = false
+                    )
+                ),
+                id = 2,
+                title = "My_Topic_2",
+                content = "<article>This is an article with 3-pictures \n <image id=\"1\" />\n" +
+                        " <image id=\"2\" />\n" +
+                        " <image id=\"3\" /> \nand 1 locked video \n<video id=\"100\" />\n  </article>",
+                favoriteCount = 12,
+                likeCount = 999,
+                commentCount = 9,
+                unlockCount = 0,
+                isUnlocked = false,
+                isQuality = false,
+                isLiked = false,
+                isFavorite = false,
+                tags = arrayListOf("幼柴", "小笨貓"),
+                creationDate = "2023-02-14",
+                isMyArticle = true,
+                sexType = listOf(0, 1, 2)
+            ),
+            TopicArticleDetailItem(
+                user = User(),
+                questionCount = 0,
+                images = arrayListOf(
+                    EditArticleData.Image(
+                        id = 5,
+                        url = url5
+                    ),
+                    EditArticleData.Image(
+                        id = 6,
+                        url = url6
+                    ),
+                ),
+                videos = arrayListOf(),
+                id = 3,
+                title = "My_Topic_3",
+                content = "<article>This is a 2-pictures article \n <image id=\"5\" />\n" +
+                        " <image id=\"6\" /> </article>",
+                favoriteCount = 12,
+                likeCount = 0,
+                commentCount = 9,
+                unlockCount = 0,
+                isUnlocked = false,
+                isQuality = true,
+                isLiked = false,
+                isFavorite = false,
+                tags = arrayListOf("動物圖片", "企鵝", "貓咪"),
+                creationDate = "2023-03-14",
+                isMyArticle = true,
+                sexType = listOf(1)
+            ),
+            TopicArticleDetailItem(
+                user = User(),
+                questionCount = 0,
+                images = arrayListOf(),
+                videos = arrayListOf(
+                    EditArticleData.Video(
+                        id = 0,
+                        coverUrl = url7,
+                        previewUrl = url7,
+                        isUnlocked = true
+                    )
+                ),
+                id = 4,
+                title = "My_Topic_4",
+                content = "<article>This is an article with 1 unlocked video \n <video id=\"100\" /> </article>",
+                favoriteCount = 12,
+                likeCount = 0,
+                commentCount = 9,
+                unlockCount = 0,
+                isUnlocked = false,
+                isQuality = true,
+                isLiked = false,
+                isFavorite = false,
+                tags = arrayListOf("森林之王", "霸氣"),
+                creationDate = "2023-04-14",
+                isMyArticle = true,
+                sexType = listOf(2)
+            ),
+            TopicArticleDetailItem(
+                user = User(),
+                questionCount = 0,
+                images = arrayListOf(
+                    EditArticleData.Image(
+                        id = 8,
+                        url = url8
+                    ),
+                ),
+                videos = arrayListOf(),
+                id = 5,
+                title = "My_Topic_5",
+                content = "<article>This is a one picture article \n <image id=\"5\" /> </article>",
+                favoriteCount = 12,
+                likeCount = 0,
+                commentCount = 9,
+                unlockCount = 0,
+                isUnlocked = false,
+                isQuality = true,
+                isLiked = false,
+                isFavorite = false,
+                tags = arrayListOf("動物圖片", "毛孩"),
+                creationDate = "2023-05-14",
+                isMyArticle = true,
+                sexType = listOf(0, 1)
+            ),
+            TopicArticleDetailItem(
+                user = User(),
+                questionCount = 0,
+                images = arrayListOf(),
+                videos = arrayListOf(),
+                id = 6,
+                title = "My_Topic_6",
+                content = "<article>This is a article without any picture and video</article>",
+                favoriteCount = 12,
+                likeCount = 0,
+                commentCount = 9,
+                unlockCount = 0,
+                isUnlocked = false,
+                isQuality = true,
+                isLiked = false,
+                isFavorite = false,
+                tags = arrayListOf("動物圖片", "賣萌"),
+                creationDate = "2023-06-14",
+                isMyArticle = true,
+                sexType = listOf(1, 2)
+            ),
+        )
+
+
+        fun getMockChooseVideoData() = listOf(
+            ChooseVideoData(
+                id = 1,
+                title = "呆柴",
+                previewUrl = url1,
+                coverUrl = url1,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
+            ChooseVideoData(
+                id = 2,
+                title = "笑柴",
+                previewUrl = url2,
+                coverUrl = url2,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
+            ChooseVideoData(
+                id = 3,
+                title = "不可以色色",
+                previewUrl = url3,
+                coverUrl = url3,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
+            ChooseVideoData(
+                id = 4,
+                title = "萌柴",
+                previewUrl = url4,
+                coverUrl = url4,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
+            ChooseVideoData(
+                id = 5,
+                title = "企鵝",
+                previewUrl = url5,
+                coverUrl = url5,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
+            ChooseVideoData(
+                id = 6,
+                title = "想出來",
+                previewUrl = url6,
+                coverUrl = url6,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
+            ChooseVideoData(
+                id = 7,
+                title = "大貓",
+                previewUrl = url7,
+                coverUrl = url7,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
+            ChooseVideoData(
+                id = 8,
+                title = "小鴨",
+                previewUrl = url8,
+                coverUrl = url8,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
+            ChooseVideoData(
+                id = 9,
+                title = "小小貓",
+                previewUrl = url9,
+                coverUrl = url9,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
+            ChooseVideoData(
+                id = 10,
+                title = "呆柴",
+                previewUrl = url1,
+                coverUrl = url1,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
+            ChooseVideoData(
+                id = 11,
+                title = "笑柴",
+                previewUrl = url2,
+                coverUrl = url2,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
+            ChooseVideoData(
+                id = 12,
+                title = "不可以色色",
+                previewUrl = url3,
+                coverUrl = url3,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
+            ChooseVideoData(
+                id = 13,
+                title = "萌柴",
+                previewUrl = url4,
+                coverUrl = url4,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
+            ChooseVideoData(
+                id = 14,
+                title = "企鵝",
+                previewUrl = url5,
+                coverUrl = url5,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
+            ChooseVideoData(
+                id = 15,
+                title = "想出來",
+                previewUrl = url6,
+                coverUrl = url6,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
+            ChooseVideoData(
+                id = 16,
+                title = "大貓",
+                previewUrl = url7,
+                coverUrl = url7,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
+            ChooseVideoData(
+                id = 17,
+                title = "小鴨",
+                previewUrl = url8,
+                coverUrl = url8,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
+            ChooseVideoData(
+                id = 18,
+                title = "小小貓",
+                previewUrl = url9,
+                coverUrl = url9,
+                duration = 90,
+                playCount = 90,
+                likeCount = 81,
+                creationDateTime = "2023-02-22",
+                isSelect = false
+            ),
         )
     }
 

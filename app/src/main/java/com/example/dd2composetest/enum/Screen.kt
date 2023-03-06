@@ -7,6 +7,7 @@ enum class Screen(val route: String) {
     MY_DATA_SCREEN("my_data_screen"),
     MY_WORKS_SCREEN("my_works_screen"),
     EDIT_ARTICLE_SCREEN("edit_article_screen"),
+//    ADD_ARTICLE_VIDEO_SCREEN("add_article_video_screen"),
     EDIT_USER_SCREEN("edit_user_screen"),
     MY_GOLD_COIN_SCREEN("my_gold_coin_screen"),
     MY_RED_COIN_SCREEN("my_red_coin_screen"),

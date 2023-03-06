@@ -212,6 +212,13 @@ fun NavHostController.navigateToMyWorkDatePicker() {
     }
 }
 
+//@Preview
+@Composable
+fun PreviewEditVideoDialog() {
+    EditVideoDialog(navController = NavHostController(LocalContext.current), setShowEditDialog = {},
+        isHot = true, viewModel = MyWorkViewModel(), video = MyVideoBean())
+}
+
 @Composable
 fun MyWorkDatePicker(navController: NavHostController, viewModel: MyWorkViewModel) {
     Column(
@@ -805,13 +812,6 @@ fun EditVideoDialog(
             }
         }
     }
-}
-
-//@Preview
-@Composable
-fun PreviewEditVideoDialog() {
-    EditVideoDialog(navController = NavHostController(LocalContext.current), setShowEditDialog = {},
-        isHot = true, viewModel = MyWorkViewModel(), video = MyVideoBean())
 }
 
 @Composable
@@ -1460,7 +1460,8 @@ fun MyArticleItem(
             )
 
         }
-        MyWorkRemoveComponent(true, { navController.navigateToEditArticle() }, { showDialog.value = true })
+        MyWorkRemoveComponent(true, { navController.navigateToEditArticle(item.id) }, { showDialog.value = true })
+//        Log.i("Arthur_test", "current id: ${item.id}")
     }
 }
 

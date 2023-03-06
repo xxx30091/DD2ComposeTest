@@ -2,7 +2,7 @@ package com.example.dd2composetest.ui.compose.article
 
 import android.util.Log
 import android.util.Xml
-import android.widget.TextView
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,7 +10,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.material.*
 import androidx.compose.material.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.*
@@ -20,43 +19,57 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.Placeholder
-import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.dd2composetest.R
-import com.example.dd2composetest.data.bean.EditArticleData
+import com.example.dd2composetest.data.bean.TopicArticleDetailItem
 import com.example.dd2composetest.enum.BottomSheet
 import com.example.dd2composetest.enum.Screen
-import com.example.dd2composetest.ui.compose.components.AddTagSheet
-import com.example.dd2composetest.ui.compose.components.OrientationRadioGroup
-import com.example.dd2composetest.ui.compose.components.ToolBarType
-import com.example.dd2composetest.ui.compose.components.Toolbar
+import com.example.dd2composetest.ui.compose.components.*
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.navigation.material.bottomSheet
-import com.pointlessapps.rt_editor.model.RichTextValue
 import jp.wasabeef.richeditor.RichEditor
 import org.xmlpull.v1.XmlPullParser
 import java.io.ByteArrayInputStream
 
+/**
+ * date: 2023.02.23
+ */
+
 fun NavGraphBuilder.editArticle(navController: NavHostController) {
-    composable(Screen.EDIT_ARTICLE_SCREEN.route) {
-        EditArticleScreen(navController = navController)
+    composable(
+        route = "${Screen.EDIT_ARTICLE_SCREEN.route}/{articleId}",
+        arguments = listOf(
+            navArgument("articleId") {
+                type = NavType.IntType
+                defaultValue = 0
+                nullable = false
+            }
+        )
+    ) { backStackEntry ->
+        EditArticleScreen(
+            navController = navController,
+            articleId = backStackEntry.arguments?.getInt("articleId")
+        )
     }
-    bottomSheet(BottomSheet.ADD_ARTICLE_TAG.route) {
+
+    bottomSheet(
+        route = BottomSheet.ADD_ARTICLE_TAG.route,
+    ) {
         val parent = remember(it) {
-            navController.getBackStackEntry(Screen.EDIT_ARTICLE_SCREEN.route)
+            navController.getBackStackEntry(Screen.EDIT_ARTICLE_SCREEN.route + "/{articleId}")
         }
         val viewModel: EditArticleViewModel = hiltViewModel(parent)
         AddTagSheet(
@@ -64,16 +77,39 @@ fun NavGraphBuilder.editArticle(navController: NavHostController) {
             onClick = { tag -> viewModel.onEvent(EditArticleEvent.AddTag(tag)) }
         )
     }
+    composable(
+        route = "add_article_video_screen",
+     ) {
+        val parent = remember(it) {
+            navController.getBackStackEntry(Screen.EDIT_ARTICLE_SCREEN.route + "/{articleId}")
+        }
+        val viewModel: EditArticleViewModel = hiltViewModel(parent)
+        val content = viewModel.article.content.replace("</article>", "<video id=\"100\" /></article>")
+        AddTopicVideoScreen(
+            navController = navController,
+            videos = viewModel.addableVideo,
+            onNextClick = { video ->
+                viewModel.onEvent(
+                    EditArticleEvent.AddVideo(arrayListOf(video), content))
+                Log.i("Arthur_test", "videos: ${viewModel.article.videos?.get(0)?.id}")
+            }
+        )
+    }
 }
 
-fun NavHostController.navigateToEditArticle() {
-    navigate(Screen.EDIT_ARTICLE_SCREEN.route) {
+fun NavHostController.navigateToEditArticle(id: Int) {
+    navigate("${Screen.EDIT_ARTICLE_SCREEN.route}/$id") {
         launchSingleTop = true
     }
 }
 
 @Composable
-fun EditArticleScreen(navController: NavHostController) {
+fun EditArticleScreen(
+    navController: NavHostController,
+    viewModel: EditArticleViewModel = hiltViewModel(),
+    articleId: Int?
+) {
+    viewModel.getArticle(articleId ?: 0)
     Column(
         modifier = Modifier.background(Color.White)
     ) {
@@ -81,27 +117,42 @@ fun EditArticleScreen(navController: NavHostController) {
             navController = navController,
             title = "編輯文章",
             toolbarType = ToolBarType.HAS_RIGHT_BTN_TOOLBAR,
-            rightName = "發布",
-            onClickRight = {}
-        )
-        EditArticleContent(navController = navController)
+            rightName = "發布"
+        ) {
+            viewModel.onEvent(EditArticleEvent.SubmitArticle {
+                Log.i("Arthur_test", viewModel.article.content)
+//                navController.popBackStack()
+            })
+        }
+        EditArticleContent(navController = navController, viewModel = viewModel)
     }
 }
 
 @Preview
 @Composable
 fun PreviewEditArticleScreen() {
-    EditArticleScreen(NavHostController(LocalContext.current))
+    EditArticleScreen(NavHostController(LocalContext.current), articleId = 0)
 }
 
 @Composable
 fun EditArticleContent(
     navController: NavHostController,
-    viewModel: EditArticleViewModel = hiltViewModel()
+    viewModel: EditArticleViewModel,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    var content by remember { mutableStateOf(RichTextValue.get()) }
     val tags = viewModel.article.tags
+    val context = LocalContext.current
+    
+    LaunchedEffect(key1 = context) {
+        viewModel.route.collect { event ->
+            when(event) {
+                is EditArticleEvent.SendToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     Column {
         Column(
             modifier = Modifier
@@ -123,6 +174,9 @@ fun EditArticleContent(
                             backgroundColor = Color.White
                         ),
                     ),
+                textStyle = TextStyle(
+                    fontSize = 20.sp
+                ),
                 decorationBox = { innerTextField ->
                     TextFieldDefaults.TextFieldDecorationBox(
                         value = viewModel.article.title,
@@ -152,14 +206,11 @@ fun EditArticleContent(
                     .weight(1f)
                     .padding(top = 8.dp, bottom = 8.dp),
             ) {
-                viewModel.article.videos?.let { videos ->
-                    RichEditor(
-                        content = viewModel.article.content,
-                        imgUrls = viewModel.article.images,
-                        videos = videos,
-                        videoArray = arrayListOf()
-                    )
-                }
+//                RichEditorAndroidView(
+//                    viewModel = viewModel,
+//                    videoArray = arrayListOf()
+//                )
+                EditorView(viewModel)
             }
             OrientationRadioGroup(
                 orientations = ArrayList(viewModel.article.sexType),
@@ -187,7 +238,11 @@ fun EditArticleContent(
             .then(Modifier.padding(start = 0.dp, end = 0.dp))
             .padding(top = 9.dp), color = Color(0xffd8d8d8), thickness = 1.dp)
 
-        EditArticleAddBar()
+        EditArticleAddBar(
+            viewModel = viewModel,
+            onClickPicture = {  },
+            onClickVideo = { navController.navigate("add_article_video_screen") }
+        )
     }
 
 }
@@ -214,7 +269,7 @@ fun EditArticleTagItem(
             )
             .clip(RoundedCornerShape(20.dp))
             .clickable {
-                if (viewType == 99) navController.navigate(BottomSheet.ADD_ARTICLE_TAG.route)
+                if (viewType == 99) navController.navigate(BottomSheet.ADD_ARTICLE_TAG.route) { }
                 else onClick(viewType)
             }
             .padding(start = 14.dp, end = 14.dp),
@@ -247,6 +302,7 @@ fun EditArticleTagItem(
 
 @Composable
 fun EditArticleAddBar(
+    viewModel: EditArticleViewModel,
     onClickPicture: () -> Unit = {},
     onClickVideo: () -> Unit = {},
 ) {
@@ -270,107 +326,142 @@ fun EditArticleAddBar(
             modifier = Modifier
                 .padding(start = 19.dp, top = 9.dp, end = 9.dp, bottom = 9.dp)
                 .size(26.dp)
-                .clickable { onClickVideo() }
+                .clickable {
+                    viewModel.onEvent(EditArticleEvent.ClickSelectVideo(onClick = onClickVideo))
+                }
         )
     }
 }
 
-class EditArticleFragment: Fragment()
-
 @Composable
-fun RichEditor(
-    content: String,
-    imgUrls: ArrayList<EditArticleData.Image>,
-    videos: ArrayList<EditArticleData.Video>,
-    videoArray: ArrayList<Int>
+fun EditorView(
+    viewModel: EditArticleViewModel,
+//    data: TopicArticleDetailItem
 ) {
-    AndroidView(
-        modifier = Modifier,
-        factory = { context ->
-            RichEditor(context).apply {
-                var stream: ByteArrayInputStream? = null
-                try {
-                    stream = ByteArrayInputStream(content.toByteArray())
-                } catch (e: Exception) {
-                    Log.e("rich_editor", e.toString())
-                }
-                val parser: XmlPullParser = Xml.newPullParser()
-                parser.setInput(stream, "UTF-8")
-                var type = parser.eventType
-                var imageIndex = 0
-                var videoIndex = 0
-                videos.forEach{
-                    videoArray.add(it.id)
-                }
-                Log.d("Arthur_test", "setHtml content: $content")
-                val html = StringBuilder()
-                this.focusEditor()
-                this.html = ""
+    val data by remember { mutableStateOf(viewModel.article) }
+//    Log.i("Arthur_debug", "EditorView: $data")
 
-                while (type != XmlPullParser.END_DOCUMENT) {
-                    when (type) {
-                        XmlPullParser.START_TAG -> {
-                            Log.d("Arthur_test", "parser.name: ${parser.name}")
-                            if (parser.name.equals("image", true)) {
-                                if (imageIndex < imgUrls.size) {
-                                    html.append("<img src=\"${imgUrls[imageIndex].url}\" alt=\"dachshund\" width=\"100%\" id=\"${imgUrls[imageIndex].id}\"/><br>")
-                                }
-                                imageIndex++
-                            }
-                            if (parser.name.equals("video", true)) {
-                                html.append("<br><video src=\"\" width=\"100%\" controls=\"\"></video><br><br>")
-                                videoIndex++
-                            }
-                        }
-                        XmlPullParser.TEXT -> {
-                            Log.d("Arthur_test", "parser.text: ${parser.text ?: "NO TEXT"}")
-                            if (parser.text == "\n") html.append("<br>")
-                            else html.append(parser.text)
-                        }
-                    }
-                    type = parser.next()
-                }
-                this.html = html.toString()
-                Log.d("Arthur_test", "editor.html: ${this.html}")
-            }
-        },
-        update = {
-
-        }
-    )
+    Editor2(data = data) // use TextField and images
+//    Editor3(data = data) // use webView
 }
 
 
-//@Preview
 //@Composable
-//fun RichTextEditor(editArticle: TopicArticleDetailItem = TopicArticleDetailItem()) {
-//    val images = editArticle.images
-//    var inlineContent: Map<String, InlineTextContent> = mapOf()
-//    if (images.isNotEmpty()) {
-//        for (i in images.indices) {
-//            inlineContent.plus(
-//                Pair(
-//                    "img${images[i].id}",
-//                    InlineTextContent(
-//                        Placeholder(width = 0.5.em, height = 0.5.em, PlaceholderVerticalAlign.Center)
-//                    ) {
-//                        Image(
-//                            painter = rememberAsyncImagePainter(model = images[i].url),
-//                            contentDescription = ""
-//                        )
+//fun RichEditorAndroidView(
+//    viewModel: EditArticleViewModel,
+////    imgUrls: ArrayList<EditArticleData.Image>,
+////    videos: ArrayList<EditArticleData.Video>,
+//    videoArray: ArrayList<Int>
+//) {
+//    val imgUrls = viewModel.article.images
+////    val videos = remember { mutableStateOf(viewModel.article.videos) }
+//    val videos = viewModel.article.videos
+//
+//    AndroidView(
+//        modifier = Modifier,
+//        factory = { context ->
+//            RichEditor(context).apply {
+//                var stream: ByteArrayInputStream? = null
+//                try {
+//                    stream = ByteArrayInputStream(viewModel.article.content.toByteArray())
+//                } catch (e: Exception) {
+//                    Log.e("rich_editor", e.toString())
+//                }
+//                val parser: XmlPullParser = Xml.newPullParser()
+//                parser.setInput(stream, "UTF-8")
+//                var type = parser.eventType
+//                var imageIndex = 0
+//                var videoIndex = 0
+//                viewModel.article.videos?.forEach{
+//                    videoArray.add(it.id)
+//                }
+//                Log.d("rich_editor", "videoArray: $videoArray")
+//                Log.d("rich_editor", "setHtml content: ${viewModel.article.content}")
+//                val html = StringBuilder()
+//                this.focusEditor()
+//                this.html = ""
+//
+//                while (type != XmlPullParser.END_DOCUMENT) {
+//                    when (type) {
+//                        XmlPullParser.START_TAG -> {
+//                            Log.d("rich_editor", "parser.name: ${parser.name}")
+//                            if (parser.name.equals("image", true)) {
+//                                if (imageIndex < imgUrls.size) {
+//                                    html.append("<img src=\"${imgUrls[imageIndex].url}\" alt=\"dachshund\" width=\"100%\" id=\"${imgUrls[imageIndex].id}\"/><br>")
+//                                }
+//                                imageIndex++
+//                            }
+//                            if (parser.name.equals("video", true)) {
+//                                html.append("<br><video src=\" \" width=\"100%\" controls=\"\" poster=\"${videos?.get(0)?.coverUrl}\"></video><br><br>")
+//                                videoIndex++
+//                            }
+//                        }
+//                        XmlPullParser.TEXT -> {
+//                            Log.d("rich_editor", "parser.text: ${parser.text ?: "NO TEXT"}")
+//                            if (parser.text == "\n") html.append("<br>")
+//                            else html.append(parser.text)
+//                        }
 //                    }
-//                )
-//            )
-//        }
-//    }
+//                    type = parser.next()
+//                }
+//                this.html = html.toString()
+//                Log.d("rich_editor", "editor.html: ${this.html}")
 //
+////                this.setOnTextChangeListener {
+////                    viewModel.onEvent(
+////                        EditArticleEvent
+////                    )
+////                }
+//            }
+//        },
+//        update = {
 //
-//
-//    TextField(
-//        value = "",
-//        onValueChange = {
-//
+////            it
+////
+////            val html = it.html
+////            if (html == null || html.trim().isEmpty()) {
+////                viewModel.onEvent(EditArticleEvent.SendToast("請輸入文章內容"))
+////            }
+////            val imageArray: ArrayList<File> = arrayListOf()
+////            val htxService = HTXService()
+////            val wrapHtml = htxService.toXML(html, imageArray, videoArray)
+////                .replace("<article>\n ", "<article>")
+////                .replace("<article>\n　", "<article>")
+////                .replace("<article>\n  ", "<article>")
+////            Log.d("rich_editor", "wrapHtml: $wrapHtml")
+////
+////            Log.d("rich_editor", "update html: $html")
+////            if (!videos.isNullOrEmpty()) it.html += "<br><video src=\" \" width=\"100%\" controls=\"\" poster=\"${videos[0].coverUrl}\"></video><br>"
+////            it.html += "<br><video src=\" \" width=\"100%\" controls=\"\" poster=\"${videos?.get(0)?.coverUrl}\"></video><br><br>"
 //        }
 //    )
 //}
 
+/**
+ * HTML <video> 播放影片 / 多媒體影音串流
+ *
+ * <video> 標籤的屬性 (attributes)：
+ * src: 影片的位址 (URL)
+ * poster: 指定一個圖片位址，做為影片未開始播放之前的預覽圖
+ * preload: 給瀏覽器是否該預載影片的提示。有這些值可以使用：
+     * none: 不要預載，因為使用者很可能不會播放該音訊，或你想多節省 server 頻寬
+     * metadata: 先下載影片的元數據資料 (像是片長)
+     * auto: 使用者很可能會播放該影片，可以先進行下載
+ * autoplay: 布林 (boolean) 屬性，控制是否自動播放影片，預設是 false
+ * loop: 布林 (boolean) 屬性，控制是否重複播放影片，預設是 false
+ * muted: 布林 (boolean) 屬性，控制是否靜音，預設是 false
+ * controls: 布林 (boolean) 屬性，指定是否顯示影音控制面板，由瀏覽器提供上面會有播放進度、暫停鈕、播放鈕、靜音鈕等，預設是 false
+ * width: 一個數字，設定影片顯示區域的寬度，單位是像素 (pixel)
+ * height: 一個數字，設定影片顯示區域的高度，單位是像素 (pixel)
+ *
+ * e.q. <video src="clip.mp4" controls></video>
+ */
+
+@Composable
+fun RichMediaTextEditor() {
+
+//    TextField(value = , onValueChange = )
+
+
+
+}
