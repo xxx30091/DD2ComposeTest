@@ -59,9 +59,15 @@ fun NavGraphBuilder.editArticle(navController: NavHostController) {
             }
         )
     ) { backStackEntry ->
+        val articleId by remember { mutableStateOf(backStackEntry.arguments?.getInt("articleId")) }
+        val viewModel: EditArticleViewModel = hiltViewModel()
+
+//        viewModel.getCurrentArticleId(articleId ?: 0)
+//        viewModel.getArticle(articleId ?: 0)
         EditArticleScreen(
             navController = navController,
-            articleId = backStackEntry.arguments?.getInt("articleId")
+            viewModel = viewModel,
+//            articleId = articleId
         )
     }
 
@@ -84,13 +90,13 @@ fun NavGraphBuilder.editArticle(navController: NavHostController) {
             navController.getBackStackEntry(Screen.EDIT_ARTICLE_SCREEN.route + "/{articleId}")
         }
         val viewModel: EditArticleViewModel = hiltViewModel(parent)
-        val content = viewModel.article.content.replace("</article>", "<video id=\"100\" /></article>")
         AddTopicVideoScreen(
             navController = navController,
-            videos = viewModel.addableVideo,
+//            videos = viewModel.addableVideo,
+            viewModel = viewModel,
             onNextClick = { video ->
                 viewModel.onEvent(
-                    EditArticleEvent.AddVideo(arrayListOf(video), content))
+                    EditArticleEvent.AddVideo(arrayListOf(video)))
                 Log.i("Arthur_test", "videos: ${viewModel.article.videos?.get(0)?.id}")
             }
         )
@@ -106,10 +112,11 @@ fun NavHostController.navigateToEditArticle(id: Int) {
 @Composable
 fun EditArticleScreen(
     navController: NavHostController,
-    viewModel: EditArticleViewModel = hiltViewModel(),
-    articleId: Int?
+    viewModel: EditArticleViewModel,
+//    articleId: Int?
 ) {
-    viewModel.getArticle(articleId ?: 0)
+//        viewModel.getArticle(articleId ?: 0)
+
     Column(
         modifier = Modifier.background(Color.White)
     ) {
@@ -127,12 +134,12 @@ fun EditArticleScreen(
         EditArticleContent(navController = navController, viewModel = viewModel)
     }
 }
-
-@Preview
-@Composable
-fun PreviewEditArticleScreen() {
-    EditArticleScreen(NavHostController(LocalContext.current), articleId = 0)
-}
+//
+//@Preview
+//@Composable
+//fun PreviewEditArticleScreen() {
+//    EditArticleScreen(NavHostController(LocalContext.current), articleId = 0)
+//}
 
 @Composable
 fun EditArticleContent(

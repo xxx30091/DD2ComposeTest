@@ -29,22 +29,29 @@ import com.example.dd2composetest.data.bean.TopicArticleDetailItem
 import org.xmlpull.v1.XmlPullParser
 import java.io.ByteArrayInputStream
 
-@Composable
-fun Editor2(data: TopicArticleDetailItem) {
 //    val a = "<article> This is an article with 3-pictures" +
 //            " \n <image id=\"1\"/> \n <image id=\"2\" /> \n <image id=\"3\" />" +
 //            " \n and 1 locked video \n <video id=\"100\" /> </article>"
+
+@Composable
+fun Editor2(
+    data: TopicArticleDetailItem
+) {
+    val scroll = rememberScrollState()
     val parsedArticle by remember { mutableStateOf(parseArticle(data)) }
 //    val parsedArticle = parseArticle(data)
-    val scroll = rememberScrollState()
-    var articleContent by remember { mutableStateOf("") }
+//    var articleContent by remember { mutableStateOf("") }
+    var articleContent =""
+    Log.i("Arthur_test", "article_content_1: $articleContent")
+
+    // TODO 直接用 event ?
 
     Column(
         modifier = Modifier
             .verticalScroll(scroll)
     ) {
 //        articleContent.plus("<article>")
-        articleContent += "<article>"
+//        articleContent += "<article>"
         parsedArticle.forEach { block ->
             when {
                 block.startsWith("<text ") -> {
@@ -60,15 +67,17 @@ fun Editor2(data: TopicArticleDetailItem) {
                     articleContent += textBlock
                 }
                 block.startsWith("<img src=") -> {
+                    val info = block.replace("<img src=", "").split(" id=")
                     Image(
-                        painter = rememberAsyncImagePainter(model = block.replace("<img src=", "")),
+                        painter = rememberAsyncImagePainter(model = info[0]),
+//                        painter = rememberAsyncImagePainter(model = block.replace("<img src=", "")),
                         contentDescription = "",
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(210.dp),
                         contentScale = ContentScale.Crop
                     )
-                    articleContent += "<image id=\"$block\"/>"
+                    articleContent += "<image id=\"${info[1]}\"/>"
                 }
                 block.startsWith("<video src=") -> {
                     VideoPlayer(block.replace("<video src=", ""))
@@ -77,32 +86,10 @@ fun Editor2(data: TopicArticleDetailItem) {
                 }
             }
 //            articleContent.plus("</article>")
-            articleContent += "</article>"
-            Log.i("Arthur_test", "new content: $articleContent")
-//            when (block) {
-//                is TextBlock -> {
-//                    var textBlock by remember { mutableStateOf(block.text) }
-//                    BasicTextField(
-//                        value = textBlock,
-//                        onValueChange = {
-//                            textBlock = it
-////                        block = block.copy(text = it)
-//                        },
-//                        modifier = Modifier.fillMaxWidth(),
-//                        keyboardOptions = KeyboardOptions.Default.copy(),
-//                    )
-//                }
-//                is ImageBlock -> Image(
-//                    painter = rememberAsyncImagePainter(model = block.imageUrl),
-//                    contentDescription = "",
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .height(210.dp),
-//                    contentScale = ContentScale.Crop
-//                )
-//                is VideoBlock -> VideoPlayer(block.videoUrl)
-//            }
+//            articleContent += "</article>"
         }
+
+        Log.i("Arthur_test", "article_content_2: $articleContent")
     }
 }
 
@@ -145,13 +132,14 @@ fun parseArticle(data: TopicArticleDetailItem): List<String> {
     var imageIndex = 0
     var videoIndex = 0
     val html = StringBuilder()
+    blocks.add("<article>")
     while (type != XmlPullParser.END_DOCUMENT) {
         when (type) {
             XmlPullParser.START_TAG -> {
                 if (parser.name.equals("image", true)) {
                     if (imageIndex < data.images.size) {
                         val imgUrl = data.images[imageIndex].url
-                        blocks.add("<img src=$imgUrl")
+                        blocks.add("<img src=$imgUrl id=${data.images[imageIndex].id}")
 //                        html.append("<img src=\"${data.images[imageIndex].url}\" alt=\"dachshund\" width=\"100%\" id=\"${data.images[imageIndex].id}\"/><br>")
                     }
                     imageIndex++
@@ -171,6 +159,8 @@ fun parseArticle(data: TopicArticleDetailItem): List<String> {
         }
         type = parser.next()
     }
+    blocks.add("</article>")
+    Log.i("Arthur_test", "blocks_content: $blocks")
     return blocks
 }
 

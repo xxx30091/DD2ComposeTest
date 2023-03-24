@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.dd2composetest.R
@@ -34,22 +35,26 @@ import com.example.dd2composetest.data.bean.ChooseVideoData
 import com.example.dd2composetest.data.bean.EditArticleData
 import com.example.dd2composetest.data.mock.MockData
 import com.example.dd2composetest.data.mock.MockData.Companion.getMockChooseVideoData
+import com.example.dd2composetest.ui.compose.article.EditArticleViewModel
 import com.example.dd2composetest.utils.DateUtils
 
 @Preview
 @Composable
 fun PreviewAddTopicVideoScreen() {
-    AddTopicVideoScreen(NavHostController(LocalContext.current), {}, getMockChooseVideoData())
+    AddTopicVideoScreen(NavHostController(LocalContext.current), {}, hiltViewModel())
+//    AddTopicVideoScreen(NavHostController(LocalContext.current), {}, getMockChooseVideoData())
 }
 
 @Composable
 fun AddTopicVideoScreen(
     navController: NavHostController,
-    onNextClick: ( EditArticleData.Video ) -> Unit = {},
-    videos: List<ChooseVideoData>
+    onNextClick: ( EditArticleData.Video ) -> Unit,
+    viewModel: EditArticleViewModel,
+//    videos: List<ChooseVideoData>
 ) {
     val selection = remember { mutableStateOf<ChooseVideoData?>(null) }
     val context = LocalContext.current
+    val videos = viewModel.addableVideo
     Column(
         modifier = Modifier
     ) {

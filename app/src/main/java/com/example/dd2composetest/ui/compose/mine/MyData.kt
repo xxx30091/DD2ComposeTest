@@ -170,7 +170,7 @@ fun MyDataScreen(navController: NavHostController) {
         Item(R.drawable.ic_edit_user, "编辑个人资料") { navController.navigateToEditUser() }
         Item(R.drawable.ic_my_work, "我的作品") { navController.navigateToMyWorks() }
         Item(R.drawable.ic_notification, "消息通知") { navController.navigateToFansPromote() }
-        Item(R.drawable.ic_my_favorite, "我的收藏") { navController.navigateToRecommendationVideo() }
+        Item(R.drawable.ic_my_favorite, "我的收藏") { navController.navigateToMyWorks() }
     }
 }
 //fun MyDataScreen(onClickRecommendVideo: () -> Unit, onClickFansPromote: () -> Unit) {

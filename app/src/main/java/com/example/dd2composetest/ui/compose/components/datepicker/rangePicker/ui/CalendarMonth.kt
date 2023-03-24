@@ -65,6 +65,8 @@ fun CalendarMonth(
                 state.getDayType(currentDate.timeInMillis)
             }
 
+            // 不要讓他知道這麼多資訊，他只負責顯示資料
+            // 傳資料由點擊時再傳出相應位置的值？
             CalendarDay(
                 date = date,
                 selected = isSelected,
