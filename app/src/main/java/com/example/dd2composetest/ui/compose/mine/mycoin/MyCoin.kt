@@ -38,6 +38,9 @@ import com.example.dd2composetest.enum.Screen
 import com.example.dd2composetest.ui.compose.components.DateTimeFilter
 import com.example.dd2composetest.ui.compose.components.ToolBarType
 import com.example.dd2composetest.ui.compose.components.Toolbar
+import com.example.dd2composetest.ui.compose.components.datepicker.material3.ExperimentalMaterial3Api
+import com.example.dd2composetest.ui.compose.components.datepicker.material3.MaterialDateRangePicker
+import com.example.dd2composetest.ui.compose.components.datepicker.material3.rememberDateRangePickerState2
 import com.example.dd2composetest.ui.compose.components.datepicker.rangePicker.DateRangePicker
 import com.example.dd2composetest.ui.compose.components.datepicker.rangePicker.RangePickerCalendar
 import com.example.dd2composetest.ui.compose.payment.navigateToPayChoose
@@ -309,31 +312,37 @@ val end = RangePickerCalendar().apply {
 //    setCalendarDate(1970, thisMonth, today + 1)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyCoinDatePicker(navController: NavHostController, viewModel: MyCoinViewModel) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
     ) {
-        DateRangePicker(
-            modifier = Modifier,
-            initialDates = start to end,
-            yearRange = IntRange(2023, 2050),
-            title = "Select Date",
-            saveLabel = "儲存",
-            isRtl = false,
-            onCloseClick = { navController.popBackStack() },
-            onConfirmClick = { start, end ->
-                Log.i("Arthur_test", "選擇 start: ${start.longDateString}, end: ${end.shortDateString}")
-                viewModel.onEvent(MyCoinEvent.SelectDate(
-                    Pair(
-                        start.selectedDateString,
-                        end.selectedDateString
-                    )
-                ))
-                navController.popBackStack()
-            }
+//        DateRangePicker(
+//            modifier = Modifier,
+//            initialDates = start to end,
+//            yearRange = IntRange(2023, 2050),
+//            title = "Select Date",
+//            saveLabel = "儲存",
+//            isRtl = false,
+//            onCloseClick = { navController.popBackStack() },
+//            onConfirmClick = { start, end ->
+//                Log.i("Arthur_test", "選擇 start: ${start.longDateString}, end: ${end.shortDateString}")
+//                viewModel.onEvent(MyCoinEvent.SelectDate(
+//                    Pair(
+//                        start.selectedDateString,
+//                        end.selectedDateString
+//                    )
+//                ))
+//                navController.popBackStack()
+//            }
+//        )
+        //        val
+        val state = rememberDateRangePickerState2(
+//            initialSelectedStartDateMillis =
         )
+        MaterialDateRangePicker(state = state)
     }
 }
 

@@ -1,7 +1,10 @@
 package com.example.dd2composetest.ui.compose.components.datepicker.rangePicker
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
+import com.example.dd2composetest.ui.compose.components.datepicker.material3.token.MotionTokens
 
 /** Represents the colors of the various elements of a date range picker in different states. */
 @Stable
@@ -29,6 +32,55 @@ interface DateRangePickerColors {
      */
     @Composable
     fun dateContainerColor(active: Boolean): State<Color>
+
+    @Composable
+    fun dayContainerColor(
+        selected: Boolean,
+        enabled: Boolean,
+        animate: Boolean
+    ): State<Color> {
+        val target = if (selected) {
+            if (enabled) Color.Gray else Color.LightGray
+        } else {
+            Color.Transparent
+        }
+        return if (animate) {
+            animateColorAsState(
+                target,
+                tween(durationMillis = MotionTokens.DurationShort2.toInt())
+            )
+        } else {
+            rememberUpdatedState(target)
+        }
+    }
+
+    @Composable
+    fun dayContentColor(
+        isToday: Boolean,
+        selected: Boolean,
+        inRange: Boolean,
+        enabled: Boolean
+    ): State<Color> {
+        val target = when {
+            selected && enabled -> Color.White
+            selected && !enabled -> Color.Red
+            inRange && enabled -> Color.Black
+            inRange && !enabled -> Color.Yellow
+            isToday -> Color.Black
+            enabled -> Color.Blue
+            else -> Color.DarkGray
+        }
+
+        return if (inRange) {
+            rememberUpdatedState(target)
+        } else {
+            // Animate the content color only when the day is not in a range.
+            animateColorAsState(
+                target,
+                tween(durationMillis = MotionTokens.DurationShort2.toInt())
+            )
+        }
+    }
 
     /**
      * Represents the text color for this date, depending on whether it is [active].

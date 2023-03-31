@@ -39,14 +39,25 @@ class DateRangePickerState(
         }
 
         for (i in 0 until (yearRange.last - yearRange.first + 1) * 12) {
+
+            // 這個有問題
             val currentCalendar = RangePickerDates.getCalendar(
                 year = yearRange.first + (i / 12), month = i % 12, day = 1
             )
+
             if (currentCalendar.calendarYear == calendar.calendarYear && currentCalendar.calendarMonth == calendar.calendarMonth) {
                 position = i
             }
 
             months.add(currentCalendar)
+            Log.i("Arthur_debug", "i: $i")
+            Log.i("Arthur_debug", "currentCalendar month: ${currentCalendar.calendarMonth}, calendar month: ${calendar.calendarMonth}")
+//            Log.i("Arthur_debug", "same year: ${currentCalendar.calendarYear == calendar.calendarYear}, same month: ${currentCalendar.calendarMonth == calendar.calendarMonth}")
+//            Log.i("Arthur_debug", "i: $i ,position: $position")
+            Log.i("Arthur_debug", "shortDateString: ${months[i].shortDateString}")
+            Log.i("Arthur_debug", "calendar status: ${yearRange.first + (i / 12)}/${i % 12}")
+            Log.i("Arthur_debug", "calendar status days of month:")
+            Log.i("Arthur_debug", "-------------------------------------------------------")
         }
     }
 
@@ -97,9 +108,8 @@ class DateRangePickerState(
 
     fun isSelected(date: Long): Boolean {
         for (selectionDay in getSelectionDays()) {
-            if (RangePickerDates.canonicalYearMonthDay(date) == RangePickerDates.canonicalYearMonthDay(
-                    selectionDay
-                )
+            if (RangePickerDates.canonicalYearMonthDay(date)
+                == RangePickerDates.canonicalYearMonthDay(selectionDay)
             ) {
                 return true
             }

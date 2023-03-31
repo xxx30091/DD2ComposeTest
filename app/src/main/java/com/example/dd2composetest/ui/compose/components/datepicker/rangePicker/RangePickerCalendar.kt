@@ -1,5 +1,6 @@
 package com.example.dd2composetest.ui.compose.components.datepicker.rangePicker
 
+import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -61,34 +62,42 @@ class RangePickerCalendar : GregorianCalendar {
         calculateDate()
     }
 
+    fun setDisplayDate(y: Int, m: Int, d: Int) {
+        calendarYear = y
+        calendarMonth = m
+        calendarDay = d
+    }
+
     /**
      * 從當前日期填充相應的字段 *calendarYear、calendarMonth、calendarDay*
      */
     private fun calculateDate() {
         val yearMonthDay = YearMonthDay(get(YEAR), get(MONTH), get(DAY_OF_MONTH))
-
         calendarYear = yearMonthDay.year
         calendarMonth = yearMonthDay.month
         calendarDay = yearMonthDay.day
     }
 
-    /**
-     * Set the date it converts to milliseconds to the instance
-     * 設置將 Date 轉換為等效的毫秒數
-     */
     fun setCalendarDate(year: Int, month: Int, day: Int) {
         calendarYear = year
         calendarMonth = month - 1
         calendarDay = day
-
+        Log.i("Arthur_debug", "2. setCalendarDate: month = $month, calendarMonth = $calendarMonth")
+        Log.i("Arthur_debug", "3. get date: year = ${get(YEAR)}, month = ${get(MONTH)}, day = ${get(DAY_OF_MONTH)}")
         set(calendarYear, calendarMonth, calendarDay)
+        Log.i("Arthur_debug", "4. get date2: year = ${get(YEAR)}, month = ${get(MONTH)}, day = ${get(DAY_OF_MONTH)}")
     }
 
+    /**
+     * Set the date it converts to milliseconds to the instance.
+     * 將 Date 轉換為等效的毫秒數
+     */
     fun setCommonDay(day: Int) {
         calendarDay = day
 
         // 算出當天 毫秒
         timeInMillis = convertToMillis(calendarYear, calendarMonth, calendarDay)
+//        timeInMillis = convertToMillis(get(YEAR), get(MONTH), get(DAY_OF_MONTH))
     }
 
     override fun compareTo(other: Calendar): Int {

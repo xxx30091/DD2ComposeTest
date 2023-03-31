@@ -1,13 +1,8 @@
 package com.example.dd2composetest.ui.compose.components.datepicker.rangePicker
 
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
@@ -29,11 +24,11 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dd2composetest.R
+import com.example.dd2composetest.ui.compose.components.datepicker.material3.ExperimentalMaterial3Api
+import com.example.dd2composetest.ui.compose.components.datepicker.material3.MaterialDateRangePicker
+import com.example.dd2composetest.ui.compose.components.datepicker.material3.rememberDateRangePickerState2
 import com.example.dd2composetest.ui.compose.components.datepicker.rangePicker.ui.CalendarMonth
 import com.example.dd2composetest.ui.compose.components.datepicker.rangePicker.ui.HeaderDate
-import com.example.dd2composetest.utils.DateUtils
-import java.time.LocalDateTime
-import java.time.Month
 
 /**
  * A date range picker body layout
@@ -54,6 +49,7 @@ import java.time.Month
  * @author Alireza Milani
  * @since 1.0.0
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateRangePicker(
     modifier: Modifier = Modifier,
@@ -81,41 +77,55 @@ fun DateRangePicker(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 顯示所選日期部分
             val isListMode = remember {
                 mutableStateOf(true)
             }
+            // 顯示所選日期部分
             HeaderDate(
                 colors, state, headerSaveLabel, headerTitle,
                 onCloseClick, onConfirmClick, hasSelectedDate = true,
                 isListMode.value, setMode = {isListMode.value = it}
             )
 
-            if (isListMode.value) {
+            if (isListMode.value) { // 日期選擇模式
                 // 週日-週六 標題
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(7),
-                    modifier = Modifier
-                        .size(
-                            width = (48 * 7).dp,
-                            height = 48.dp
-                        ),
-                    userScrollEnabled = false
+//                LazyVerticalGrid(
+//                    columns = GridCells.Fixed(7),
+//                    modifier = Modifier
+//                        .size(
+//                            width = (48 * 7).dp,
+//                            height = 48.dp
+//                        ),
+//                    userScrollEnabled = false
+//                ) {
+//                    state.getDisplayNameOfDay().forEach { dayName ->
+//                        item {
+//                            Box(Modifier.size(48.dp)) {
+//                                Text(
+//                                    modifier = Modifier
+//                                        .fillMaxSize()
+//                                        .wrapContentSize(Alignment.Center),
+//                                    text = dayName,
+//                                )
+//                            }
+//                        }
+//                    }
+//                }
+                Row(
+                    modifier = Modifier.size(
+                        width = (48 * 7).dp,
+                        height = 48.dp
+                    )
                 ) {
                     state.getDisplayNameOfDay().forEach { dayName ->
-                        item {
-                            Box(Modifier.size(48.dp)) {
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .wrapContentSize(Alignment.Center),
-                                    text = dayName,
-                                )
-                            }
+                        Box(modifier = Modifier.size(48.dp)) {
+                            Text(
+                                text = dayName,
+                                modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center)
+                            )
                         }
                     }
                 }
-
 
                 val listState = rememberLazyListState(
                     initialFirstVisibleItemIndex = state.position
@@ -132,8 +142,10 @@ fun DateRangePicker(
                 ) {
                     items(
                         items = state.months,
-                        contentType = { RangePickerCalendar::class }
+                        key = {it.shortDateString},
+//                        contentType = { RangePickerCalendar::class }
                     ) { calendar ->
+//                        Log.i("Arthur_test", "${calendar.calendarMonth}.${calendar.calendarDay}, ${calendar.calendarYear}")
                         Text(
                             modifier = Modifier
                                 .fillParentMaxWidth()
@@ -150,7 +162,7 @@ fun DateRangePicker(
                         )
                     }
                 }
-            } else {
+            } else { // 日期輸入模式
                 Row(
                     modifier = Modifier
                         .fillMaxSize()

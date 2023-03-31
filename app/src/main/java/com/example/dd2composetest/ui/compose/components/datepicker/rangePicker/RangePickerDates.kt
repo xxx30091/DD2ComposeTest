@@ -1,5 +1,6 @@
 package com.example.dd2composetest.ui.compose.components.datepicker.rangePicker
 
+import android.util.Log
 import java.util.*
 
 /**
@@ -50,14 +51,19 @@ class RangePickerDates {
 
         fun getCalendar(year: Int, month: Int, day: Int): RangePickerCalendar {
             val calendar = RangePickerCalendar().apply {
+                Log.i("Arthur_debug", "1. SetCalendarDate(year = $year,  month = $month, day = $day)")
                 setCalendarDate(
                     year = year,
                     month = month,
                     day = day
                 )
             }
+            val a = RangePickerCalendar().apply {
+                setDisplayDate(year, month, day)
+            }
 
-            return getCalendarOf(calendar)
+            return a
+//            return getCalendarOf(calendar)
         }
 
         /**
